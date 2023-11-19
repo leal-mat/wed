@@ -40,7 +40,7 @@ void getValues(const char &t, std::vector<float> *vec, std::string str)
 
 
 
-void Mesh::buildMesh(std::string fileName)
+void Mesh::getMeshProperties(std::string fileName)
 { 
     QDir dir(QDir::currentPath());
     dir.cdUp();
@@ -51,6 +51,7 @@ void Mesh::buildMesh(std::string fileName)
     myObj.open(path.toStdString() + "/objects/" + fileName, std::ios::in);
     std::cout << std::fixed;
     std::cout << std::setprecision(4);
+    int vec_counter = 0;
     if (myObj.is_open())
     {
         std::vector<float> points;
@@ -66,30 +67,39 @@ void Mesh::buildMesh(std::string fileName)
                 // std::cout << result << "\n";
                 getValues(result[0], &points, result.substr(2, result.size() - 1));
                 glm::vec3 vertex(points.at(0), points.at(1), points.at(2));
-                point_vec.emplace_back(vertex);
+                vertex_vector.emplace_back(std::make_pair(vertex, Vertex(vec_counter++, nullptr)));
             }
             else if (result[0] == 'f' && result[1] == ' ')
             {
                 getValues(result[0], &faces, result.substr(2, result.size() - 1));
-                pair<int, int> edge1(faces.at(0),faces.at(1));
-                pair<int, int> edge2(faces.at(1),faces.at(2));
-                pair<int, int> edge3(faces.at(2),faces.at(0));
+                pair<int, int> edge1(faces.at(0), faces.at(1));
+                pair<int, int> edge2(faces.at(1), faces.at(2));
+                pair<int, int> edge3(faces.at(2), faces.at(0));
                 glm::vec3 indexes(faces.at(0), faces.at(1), faces.at(2));
                 edge_face_map.insert({edge1, indexes});
                 edge_face_map.insert({edge2, indexes});
                 edge_face_map.insert({edge3, indexes});
-                // face_set.insert(indexes);
+                // Wed* e1 = new Wed(edge1);
+                // Wed* e2 = new Wed(edge2);
+                // Wed* e3 = new Wed(edge3);
+                // auto it = face_map.find(indexes);
+                // if(it != face_map.end()){
+                //     face_map.insert({indexes, new Face(e1)});
+                // }
+                // edge_creation_map.insert({edge1, e1});
+                // edge_creation_map.insert({edge2, e2});
+                // edge_creation_map.insert({edge3, e3});
             }
         }
     }
-    std::cout << "Vertices\n";
-    for (int i = 0; i < point_vec.size(); i++)
-    {
-        std::cout << point_vec.at(i).x << " " << point_vec.at(i).y << " " << point_vec.at(i).z << "\n";
-    }
+    // std::cout << "Vertices\n";
+    // for (int i = 0; i < point_vec.size(); i++)
+    // {
+    //     std::cout << point_vec.at(i).x << " " << point_vec.at(i).y << " " << point_vec.at(i).z << "\n";
+    // }
     //unordered multimap:
     std::cout << "Indices\n";
-    for (auto elem : edge_face_map){
+    for (auto elem : edge_face_map) {
       std::cout << "(" << elem.first.first << ", " << elem.first.second << "); "<<
       "face: " << elem.second.x << " " << elem.second.y<< " " << elem.second.z << std::endl;
     }
@@ -97,10 +107,19 @@ void Mesh::buildMesh(std::string fileName)
     pair<int,int> t1(4,2);
     auto v = edge_face_map.find(t1);
     std::cout<<"Quantidade de valores nessa key: " << edge_face_map.count(t1)<<std::endl;
-    while(v != edge_face_map.end()){
+    while(v != edge_face_map.end()) {
         auto i = *v;
         std::cout<< "face: " << i.second.x << " " << i.second.y<< " " << i.second.z << std::endl;
         v++;
     }
+    return;
+}
+
+
+void Mesh::buildMesh() {
+    base_wed = (*edge_creation_map.begin()).second;
+    base_wed->status = STATUS::CREATED;
+    base_wed->rightNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
+    base_wed->leftNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
     return;
 }

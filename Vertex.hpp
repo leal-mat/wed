@@ -7,7 +7,10 @@ class Wed;
 
 class Vertex{
   public:
-    glm::vec3 point;
+    Vertex(int _index, Wed *_edge): index(_index), edge(_edge){
+      
+    }
+    int index;
     Wed *edge;
 };
 
