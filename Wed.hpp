@@ -3,6 +3,8 @@
 #include "Vertex.hpp"
 #include "Utils.hpp"
 #include "Face.hpp"
+#include <QString>
+#include <string>
 
 enum STATUS{
   CREATED,
@@ -11,8 +13,8 @@ enum STATUS{
 
 class Wed{
   public:
-    Wed(pair<int, int> _edge);
-    ~Wed(){}
+    Wed(pair<int, int> _edge = pair<int,int>(-1,-1));
+    ~Wed();
     Vertex *start, *end;
     Face *left, *right;
     Wed *left_prev, *left_next;
@@ -31,7 +33,16 @@ class Wed{
                   std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map, 
                   std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector);
 
-    Vertex* checkVertexVector(int index, std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector);
-    std::pair<Face*, Face*> checkFaceMap(glm::vec3 face1, glm::vec3 face2, std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map);
+    Vertex* checkVertexVector(int index, 
+                             std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector);
+    std::pair<Face*, Face*> checkFaceMap(glm::vec3 face1, glm::vec3 face2, 
+                                         std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map);
+    Wed * checkWedMap(pair<int,int>,
+                      std::unordered_multimap<pair<int,int>, Wed*, KeyHasher> *edge_creation_map,
+                      std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector);
+
+    QString debugWed();
+
+    
 };
 #endif // WED_HPP

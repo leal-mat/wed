@@ -1,18 +1,22 @@
 #include "Mesh.hpp"
 #include <iostream>
+#include <QApplication>
+#include "TableDialog.hpp"
 
 void print_(glm::vec3 v){
     std::cout<< v.x << " " << v.y << " " << v.z<<"\n";
 }
 
-int main(){
+int main(int argc, char ** argv){
+    QApplication app(argc,argv);
+    Mesh m = Mesh();
+    m.getMeshProperties("real_plano.obj");
+    m.buildMesh();
+    m.createWedVector();
+    TableDialog table;
+    auto s = m.getWedVector();
+    table.makeTable(&s);
 
-    glm::vec3 v(2.);
-    std::vector<glm::vec3> v2;
-    v2.push_back(v);
-
-    auto it = v2.begin();
-    print_(*it);
-    print_(*++it);
-    return 0;
+    app.exec();
+    
 }

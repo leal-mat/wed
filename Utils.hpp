@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <functional>
+#include <glm/vec3.hpp>
 
 template <typename T,typename Q>
 struct pair{

@@ -1,5 +1,5 @@
 #include "Mesh.hpp"
-
+#include <utility>
 #include <filesystem>
 #include <QString>
 #include <QDir>
@@ -39,6 +39,9 @@ void getValues(const char &t, std::vector<float> *vec, std::string str)
 }
 
 
+Mesh::Mesh(){
+
+}
 
 void Mesh::getMeshProperties(std::string fileName)
 { 
@@ -67,7 +70,7 @@ void Mesh::getMeshProperties(std::string fileName)
                 // std::cout << result << "\n";
                 getValues(result[0], &points, result.substr(2, result.size() - 1));
                 glm::vec3 vertex(points.at(0), points.at(1), points.at(2));
-                vertex_vector.emplace_back(std::make_pair(vertex, Vertex(vec_counter++, nullptr)));
+                vertex_vector.emplace_back(std::make_pair(vertex, new Vertex(vec_counter++)));
             }
             else if (result[0] == 'f' && result[1] == ' ')
             {
@@ -117,9 +120,21 @@ void Mesh::getMeshProperties(std::string fileName)
 
 
 void Mesh::buildMesh() {
-    base_wed = (*edge_creation_map.begin()).second;
+    base_wed = new Wed((*edge_face_map.begin()).first);
     base_wed->status = STATUS::CREATED;
+    pair<int, int> firstEdge = (*edge_face_map.begin()).first;
+    edge_creation_map.insert({firstEdge, base_wed});
     base_wed->rightNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
     base_wed->leftNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
     return;
+}
+
+void Mesh::createWedVector(){
+    for (auto elem : edge_creation_map) {
+        wed_vector.push_back(elem.second);
+    }
+}
+
+std::vector<Wed *> Mesh::getWedVector(){
+    return wed_vector;
 }

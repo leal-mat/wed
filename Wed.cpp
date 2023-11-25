@@ -1,7 +1,8 @@
 #include "Wed.hpp"
+#include <iostream>
 
 
-Wed::Wed(pair<int, int> _edge): edge(_edge){
+Wed::Wed(pair<int, int> _edge): edge(_edge) {
     start = nullptr;
     end = nullptr;
     left = nullptr;
@@ -13,95 +14,87 @@ Wed::Wed(pair<int, int> _edge): edge(_edge){
     status = STATUS::NOT_CREATED;
 }
 
+Wed::~Wed(){}
 
 void Wed::rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> *edge_face_map,
                     std::unordered_multimap<pair<int,int>, Wed*, KeyHasher> *edge_creation_map, 
                     std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map,
-                    std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector){
+                    std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector) {
+    
     // Primeiro passo:
+    // Verificar se já foi encontrado um right next previamente.
+    // if (right_next != nullptr){
+    //     // coisas
+    // }
     // Descobrir a face(talvez, não sei) e qual é o próximo
     auto it = edge_face_map->find(edge);
 
-    glm::vec3 face1 = (*it).second;
-    pair<int,int> par1 = (*it).first;
+    glm::vec3 face_right = (*it).second;
+    pair<int,int> par_right = (*it).first;
 
-    glm::vec3 face2 = (*++it).second;
-    pair<int,int> par2(0, 0);
 
-    // Checando se face2 é diferente de (0,0,0) para que possamos obter o par2
-    if(face2 != glm::vec3(0.)){
-        par2 = (*it).first;
+    glm::vec3 face_left = (*++it).second;
+    pair<int,int> par_left(-1, -1);
+
+
+    // Checando se face_left é diferente de (0,0,0) para que possamos obter o par_left
+    if(face_left != glm::vec3(0.)){
+        par_left = (*it).first;
     }
 
-    auto face_pair = checkFaceMap(face1, face2, face_map);
-    right = face_pair.second;
-    left = face_pair.first;
-    end = checkVertexVector(edge.second, vertex_vector);
 
+    auto face_pair = checkFaceMap(face_right, face_left, face_map);
+    right = face_pair.first;
+    left = face_pair.second;
+    end = checkVertexVector(edge.second, vertex_vector);
 
 
     pair<int, int> next_pair(0,0);
     // esses ifs não sei se estão corretos ou se bastam
-    if(edge.first == par1.first && edge.second == par1.second) {
+    if(edge.first == par_right.first && edge.second == par_right.second) {
         // sei lá
-        if(par1.first == face1.x){
-            next_pair.first=face1.y;
-            next_pair.second=face1.z;
+        if(par_right.first == face_right.x){
+            next_pair.first=face_right.y;
+            next_pair.second=face_right.z;
         }
-        else if(par1.first == face1.y){
-            next_pair.first=face1.z;
-            next_pair.second=face1.x;
+        else if(par_right.first == face_right.y){
+            next_pair.first=face_right.z;
+            next_pair.second=face_right.x;
         }
-        else if(par1.first == face1.z){
-            next_pair.first=face1.x;
-            next_pair.second=face1.y;
+        else if(par_right.first == face_right.z){
+            next_pair.first=face_right.x;
+            next_pair.second=face_right.y;
         }
     }
-    else if(face2 != glm::vec3(0.) && edge.first == par2.first && edge.second == par2.second) {
+    else if(face_left != glm::vec3(0.) && edge.first == par_left.first && edge.second == par_left.second) {
         // sei lá
-        if(par2.first == face2.x){
-            next_pair.first=face2.y;
-            next_pair.second=face2.z;
+        if(par_left.first == face_left.x){
+            next_pair.first=face_left.y;
+            next_pair.second=face_left.z;
         }
-        else if(par2.first == face2.y){
-            next_pair.first=face2.z;
-            next_pair.second=face2.x;
+        else if(par_left.first == face_left.y){
+            next_pair.first=face_left.z;
+            next_pair.second=face_left.x;
         }
-        else if(par2.first == face2.z){
-            next_pair.first=face2.x;
-            next_pair.second=face2.y;
+        else if(par_left.first == face_left.z){
+            next_pair.first=face_left.x;
+            next_pair.second=face_left.y;
         }
     }
+
     // Segundo Passo:
     // Achado a aresta rn, alteramos seus parâmetros corretamente
 
-
-    
-    // TODO
-    // Falta adicionar a verificação se o valor da face e Wed já foram criados previamente, caso não tenha sido criar em alguma condição
-
-
-    auto it_edge = edge_creation_map->find(next_pair);
-    Wed *rn = (*it_edge).second;
+    Wed *rn = checkWedMap(next_pair, edge_creation_map, vertex_vector);
     this->right_next = rn;
-    if (rn->status == STATUS::NOT_CREATED){
-      rn->status == STATUS::CREATED;
-      rn->right_prev = this;
-      rn->start = checkVertexVector(edge.first, vertex_vector);
-    }
-    else{
-        if (rn->right_prev == nullptr) {
-          rn->right_prev = this;
-          rn->start = checkVertexVector(edge.first, vertex_vector);
-        }
-        else {
-          rn->left_prev = this;
-        }
-    }
+
     // Terceiro Passo
     // Chamar a recursão do rn
-    rn->rightNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
-    rn->leftNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
+    if (rn->right_next == nullptr)
+    {
+        rn->rightNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
+        rn->leftNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
+    }
 }
 
 
@@ -109,13 +102,86 @@ void Wed::rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher>
 void Wed::leftNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> *edge_face_map,
                     std::unordered_multimap<pair<int,int>, Wed*, KeyHasher> *edge_creation_map,
                     std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map,
-                    std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector){
+                    std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector) {
+    if (edge_face_map->count(edge) == 1){
+        return;
+    }
+    auto it = edge_face_map->find(edge);
+
+    // Verificar se já foi encontrado um right next previamente.
+    // if (right_next != nullptr){
+    //     // coisas
+    // }
+    glm::vec3 face_right = (*it).second;
+    pair<int,int> par_right = (*it).first;
+
+    glm::vec3 face_left = (*++it).second;
+    pair<int,int> par_left(-1, -1);
+
+    // Checando se face_left é diferente de (0,0,0) para que possamos obter o par_left
+    if(face_left != glm::vec3(0.)){
+        par_left = (*it).first;
+    }
+
+    auto face_pair = checkFaceMap(face_right, face_left, face_map);
+    right = face_pair.first;
+    left = face_pair.second;
+    end = checkVertexVector(edge.second, vertex_vector);
+
+    pair<int, int> next_pair(0,0);
+    // esses ifs não sei se estão corretos ou se bastam
+    if(edge.first == par_right.second && edge.second == par_right.first) {
+        // sei lá
+        if(par_right.first == face_right.x){
+            next_pair.first=face_right.y;
+            next_pair.second=face_right.z;
+        }
+        else if(par_right.first == face_right.y){
+            next_pair.first=face_right.z;
+            next_pair.second=face_right.x;
+        }
+        else if(par_right.first == face_right.z){
+            next_pair.first=face_right.x;
+            next_pair.second=face_right.y;
+        }
+    }
+    else if(face_left != glm::vec3(0.) && edge.first == par_left.second && edge.second == par_left.first) {
+        // sei lá
+        if(par_left.first == face_left.x){
+            next_pair.first=face_left.y;
+            next_pair.second=face_left.z;
+        }
+        else if(par_left.first == face_left.y){
+            next_pair.first=face_left.z;
+            next_pair.second=face_left.x;
+        }
+        else if(par_left.first == face_left.z){
+            next_pair.first=face_left.x;
+            next_pair.second=face_left.y;
+        }
+    }
+
+     
+    // Segundo Passo:
+    // Achado a aresta ln, alteramos seus parâmetros corretamente
+
+    Wed *ln = checkWedMap(next_pair, edge_creation_map, vertex_vector);
+    this->left_next = ln;
+
+    // Terceiro Passo
+    // Chamar a recursão do ln
+    if (ln->right_next == nullptr)
+    {
+        ln->rightNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
+        ln->leftNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
+    }
+
     return;
 }
 
 
 
-Vertex* Wed::checkVertexVector(int index, std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector){
+Vertex* Wed::checkVertexVector(int index, std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector) {
     Vertex * return_vertex;
     if(vertex_vector->at(index).second != nullptr){
         return_vertex = vertex_vector->at(index).second;
@@ -127,29 +193,72 @@ Vertex* Wed::checkVertexVector(int index, std::vector<std::pair<glm::vec3, Verte
     return return_vertex;
 }
 
-std::pair<Face*, Face*> Wed::checkFaceMap(glm::vec3 face1, glm::vec3 face2, 
-                                            std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map){
+std::pair<Face*, Face*> Wed::checkFaceMap(glm::vec3 face_right, glm::vec3 face_left, 
+                                        std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map) {
+                                            
     std::pair<Face *, Face *> return_face;
 
-    auto face1_iterator = face_map->find(face1);
-    auto face2_iterator = face_map->find(face2);
-    if(face1_iterator != face_map->end()) {
-        return_face.second = (*face1_iterator).second;
-    }
-    else{
-        return_face.second = new Face(this);
-        face_map->insert({face1, return_face.second});
-    }
-
-    if(face2_iterator != face_map->end()) {
-        return_face.first = (*face2_iterator).second;
+    auto face_right_iterator = face_map->find(face_right);
+    auto face_left_iterator = face_map->find(face_left);
+    
+    if(face_right_iterator != face_map->end()) {
+        return_face.first = (*face_right_iterator).second;
     }
     else{
         return_face.first = new Face(this);
-        face_map->insert({face2, return_face.first});
+        face_map->insert({face_right, return_face.first});
     }
 
+    if(face_left_iterator != face_map->end()) {
+        return_face.second = (*face_left_iterator).second;
+    }
+    else{
+        if (face_left == glm::vec3(0.))
+        {
+            return_face.second = nullptr;
+        }
+        else {
+            return_face.second = new Face(this);
+            face_map->insert({face_left, return_face.second});
+        }
+    }
     return return_face;
+}
+
+Wed * Wed::checkWedMap(pair<int,int> next_pair, 
+                        std::unordered_multimap<pair<int,int>, Wed*, KeyHasher> *edge_creation_map,
+                        std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector) {
+    auto it_edge = edge_creation_map->find(next_pair);
+
+    Wed * return_wed;
+
+    if (it_edge != edge_creation_map->end())
+    {
+        return_wed = (*it_edge).second;
+        // Completando volta na face
+        if (return_wed->right_prev == nullptr) {
+          return_wed->right_prev = this;
+          return_wed->start = checkVertexVector(edge.second, vertex_vector);
+        }
+        // return_wed ja tinha sido feita na outra face
+        else {
+          return_wed->left_prev = this;
+        }
+    }
+    else {
+        return_wed = new Wed(next_pair);
+        return_wed->status == STATUS::CREATED;
+        return_wed->right_prev = this;
+        return_wed->start = checkVertexVector(edge.second, vertex_vector);
+        edge_creation_map->insert({next_pair, return_wed});
+    }
+    
+    return return_wed;
+}
+
+QString Wed::debugWed(){
+    std::string s = "<"+std::to_string(edge.first)+","+std::to_string(edge.second)+">";
+    return QString::fromStdString(s);
 }
 
 

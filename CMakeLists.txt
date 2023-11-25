@@ -17,11 +17,12 @@ set(CMAKE_AUTOUIC ON)
 qt_add_executable(
     wed
     main.cpp
-    # Mesh.cpp
-    # Wed.cpp
-    # Utils.hpp
-    # Face.hpp
-    # Vertex.hpp
+    Utils.hpp
+    Mesh.cpp
+    Wed.cpp
+    Face.cpp
+    Vertex.cpp
+    TableDialog.cpp
 )
 
 target_link_libraries(wed PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGLWidgets)

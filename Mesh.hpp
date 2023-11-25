@@ -36,14 +36,25 @@
 
 class Mesh{
 public:
+  Mesh();
   void buildMesh();
   void getMeshProperties(std::string fileName);
+  void createWedVector();
+  std::vector<Wed *> getWedVector();
 private:
-  std::vector<Wed> wed_vector;
+  std::vector<Wed *> wed_vector;
   Wed *base_wed;
+
+  // Mapa de indice aresta<int,int> para vec3 de indices face 
   std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> edge_face_map;
+  
+  // Mapa de indice aresta para objetos Wed
   std::unordered_multimap<pair<int,int>, Wed*, KeyHasher> edge_creation_map;
+
+  // Mapa de vec3 indices de face para objetos Face
   std::unordered_multimap<glm::vec3, Face*, KeyHasher2> face_map;
+
+  // Array de par <Coordenadas de vertice, Vertex*>
   std::vector<std::pair<glm::vec3, Vertex*>> vertex_vector;
 };
 
