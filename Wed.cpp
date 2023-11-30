@@ -21,35 +21,53 @@ void Wed::rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher>
                     std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map,
                     std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector) {
     
+std::cout<<"entrou no right\n";
     // Primeiro passo:
     // Verificar se já foi encontrado um right next previamente.
     // if (right_next != nullptr){
     //     // coisas
     // }
     // Descobrir a face(talvez, não sei) e qual é o próximo
+    std::cout<< "Edge: " << edge.first << ", " << edge.second << "\n";
     auto it = edge_face_map->find(edge);
-
+    //std::cout<<"Edge debug: "<<edge.first<< ", " << edge.second << "\n"; 
+    //std::cout<<"Pegou o iterator\n";
+    //std::cout<<"Edge: "<<edge.first << " " <<edge.second<<std::endl;
+    
+    if((it)==edge_face_map->end()){
+        std::cout<<"meu mano era end()\n";
+    }
     glm::vec3 face_right = (*it).second;
     pair<int,int> par_right = (*it).first;
+    
+    glm::vec3 face_left = glm::vec3(0.);
+    std::cout<<"testando 1\n";
+    if((++it )!=edge_face_map->end()){
+        std::cout<<"testando 2\n";
+        face_left = (*it).second;
+    }
+    
+    
 
-
-    glm::vec3 face_left = (*++it).second;
     pair<int,int> par_left(-1, -1);
 
 
+
     // Checando se face_left é diferente de (0,0,0) para que possamos obter o par_left
-    if(face_left != glm::vec3(0.)){
+    std::cout << "Face Left: " << face_left.x << ", " << face_left.y << ", " << face_left.z << "\n";
+    if(face_left != glm::vec3(0.))
+    {
         par_left = (*it).first;
     }
-
-
+    
     auto face_pair = checkFaceMap(face_right, face_left, face_map);
+    std::cout << "debug 2\n";
     right = face_pair.first;
     left = face_pair.second;
     end = checkVertexVector(edge.second, vertex_vector);
+    std::cout << "debug 3\n";
 
-
-    pair<int, int> next_pair(0,0);
+    pair<int, int> next_pair(-10,-10);
     // esses ifs não sei se estão corretos ou se bastam
     if(edge.first == par_right.first && edge.second == par_right.second) {
         // sei lá
@@ -81,6 +99,9 @@ void Wed::rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher>
             next_pair.second=face_left.y;
         }
     }
+    std::cout<< "ParRight: " << par_right.first << ", " << par_right.second << "\n";
+    std::cout<< "ParLeft: " << par_left.first << ", " << par_left.second << "\n";
+    std::cout<< "Next: " << next_pair.first << ", " << next_pair.second << "\n";
 
     // Segundo Passo:
     // Achado a aresta rn, alteramos seus parâmetros corretamente
@@ -103,6 +124,7 @@ void Wed::leftNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> 
                     std::unordered_multimap<pair<int,int>, Wed*, KeyHasher> *edge_creation_map,
                     std::unordered_multimap<glm::vec3, Face*, KeyHasher2> *face_map,
                     std::vector<std::pair<glm::vec3, Vertex*>> *vertex_vector) {
+    std::cout<<"Entrou no left\n";
     if (edge_face_map->count(edge) == 1){
         return;
     }
@@ -172,7 +194,9 @@ void Wed::leftNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> 
     // Chamar a recursão do ln
     if (ln->right_next == nullptr)
     {
+        
         ln->rightNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
+        
         ln->leftNext(edge_face_map, edge_creation_map, face_map, vertex_vector);
     }
 

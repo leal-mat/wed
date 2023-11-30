@@ -35,6 +35,7 @@ void getValues(const char &t, std::vector<float> *vec, std::string str)
             std::getline(new_stream, face, '/');
             vec->at(pos++) = std::stof(face) - 1;
         }
+        std::reverse(vec->begin(), vec->end());
     }
 }
 
@@ -61,8 +62,8 @@ void Mesh::getMeshProperties(std::string fileName)
         std::vector<float> faces;
         points.reserve(3);
         points.resize(3);
-        faces.reserve(6);
-        faces.resize(6);
+        faces.reserve(3);
+        faces.resize(3);
         while (std::getline(myObj, result))
         {
             if (result[0] == 'v' && result[1] == ' ')
@@ -115,6 +116,7 @@ void Mesh::getMeshProperties(std::string fileName)
         std::cout<< "face: " << i.second.x << " " << i.second.y<< " " << i.second.z << std::endl;
         v++;
     }
+    //exit(-1);
     return;
 }
 
@@ -125,6 +127,7 @@ void Mesh::buildMesh() {
     pair<int, int> firstEdge = (*edge_face_map.begin()).first;
     edge_creation_map.insert({firstEdge, base_wed});
     base_wed->rightNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
+    std::cout<<"saiu do rightnext\n";
     base_wed->leftNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
     return;
 }

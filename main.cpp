@@ -10,7 +10,7 @@ void print_(glm::vec3 v){
 int main(int argc, char ** argv){
     QApplication app(argc,argv);
     Mesh m = Mesh();
-    m.getMeshProperties("real_plano.obj");
+    m.getMeshProperties("orisso.obj");
     m.buildMesh();
     m.createWedVector();
     TableDialog table;
