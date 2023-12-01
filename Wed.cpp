@@ -189,7 +189,7 @@ void Wed::leftNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> 
 
     Wed *ln = checkWedMap(next_pair, edge_creation_map, vertex_vector);
     this->left_next = ln;
-
+    
     // Terceiro Passo
     // Chamar a recursão do ln
     if (ln->right_next == nullptr)
@@ -262,7 +262,13 @@ Wed * Wed::checkWedMap(pair<int,int> next_pair,
         // Completando volta na face
         if (return_wed->right_prev == nullptr) {
           return_wed->right_prev = this;
-          return_wed->start = checkVertexVector(edge.second, vertex_vector);
+        //   if(edge.first == return_wed->edge.first || edge.first == return_wed->edge.second){
+        //     return_wed->start = checkVertexVector(edge.first, vertex_vector);
+        //   }
+        //   else{
+        //     return_wed->start = checkVertexVector(edge.second, vertex_vector);
+        //   }
+        return_wed->start = checkVertexVector(edge.second, vertex_vector);
         }
         // return_wed ja tinha sido feita na outra face
         else {
@@ -273,7 +279,12 @@ Wed * Wed::checkWedMap(pair<int,int> next_pair,
         return_wed = new Wed(next_pair);
         return_wed->status == STATUS::CREATED;
         return_wed->right_prev = this;
-        return_wed->start = checkVertexVector(edge.second, vertex_vector);
+        if(edge.first == return_wed->edge.first || edge.first == return_wed->edge.second){
+            return_wed->start = checkVertexVector(edge.first, vertex_vector);
+        }
+        else{
+          return_wed->start = checkVertexVector(edge.second, vertex_vector);
+        }
         edge_creation_map->insert({next_pair, return_wed});
     }
     

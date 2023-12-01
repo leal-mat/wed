@@ -1,0 +1,25 @@
+- Right Next
+->Existia
+  Rp nao existia:
+    coloca o atual no rp
+  Rp existia: 
+    coloca o atual no lp
+
+
+->Nao Existia
+  Crio e coloco o atual como rp
+
+
+
+
+
+- Left Next
+->Existia
+  Rp nao existia:
+    coloca o atual no rp
+  Rp existia:
+    coloca o atual no lp
+
+
+->Nao Existia
+  Crio e coloca o atual no rp
