@@ -9,40 +9,34 @@
 #include <unordered_map>
 #include <functional>
 #include "Utils.hpp"
+#include <numeric>
+#include "renderer/GLObject.hpp"
 
-// template <typename T,typename Q>
-// struct pair{
-//     T first;
-//     T second;
 
-//     pair(T _first, Q _second){
-//       first = _first;
-//       second = _second;
-//     }
-    
-//     bool operator==(const pair &other) const
-//     { 
-//         return (first == other.first && second == other.second) || (first == other.second && second == other.first);
-//     }
-// };
-
-// struct KeyHasher
-// {
-//   std::size_t operator()(const pair<int,int>& k) const
-//   {
-//     return (std::hash<int>()(k.first) ^ std::hash<int>()(k.second));
-//   }
-// };
-
-class Mesh{
+class Mesh : public GLObject{
 public:
   Mesh();
   void buildMesh();
   void getMeshProperties(std::string fileName);
   void createWedVector();
+  void createFaceVector();
   std::vector<Wed *> getWedVector();
+  std::vector<Face *> getFaceVector();
+  std::vector<std::pair<glm::vec3, Vertex*>> getVertexVector();
+  Wed* getBaseWed();
+  void markFace(Face* face);
+  void markEdge(Wed* edge);
+  void markVertex(Vertex* vertex);
+  void EV(Vertex* v);
+  void EE(Wed* e);
+  void FE(Wed* e);
+  void VE(Wed* e);
+  void EF(Face* face);
+  void Draw() override;
+  void init() override;
 private:
   std::vector<Wed *> wed_vector;
+  std::vector<Face *> face_vector;
   Wed *base_wed;
 
   // Mapa de indice aresta<int,int> para vec3 de indices face 
@@ -56,6 +50,9 @@ private:
 
   // Array de par <Coordenadas de vertice, Vertex*>
   std::vector<std::pair<glm::vec3, Vertex*>> vertex_vector;
+
+  // Index Vector
+  std::vector<uint> idxVector;
 };
 
 #endif //MESH_HPP

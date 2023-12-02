@@ -2,93 +2,167 @@
 
 TableDialog::TableDialog(QWidget * parent) : QDialog(parent){
   layout = new QHBoxLayout(this);
-  table = new QTableWidget(this);
-  setFixedSize(1280,960);
-  labels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";
+  //layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
+  WedTable = new QTableWidget();
+  VertexTable = new QTableWidget();
+  FaceTable = new QTableWidget();
+
+  WedTable->horizontalHeader()->setStretchLastSection(true);
+  WedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";
+
+  VertexTable->horizontalHeader()->setStretchLastSection(true);
+  VertexLabels << "Vertex";
+
+  FaceTable->horizontalHeader()->setStretchLastSection(true);
+  FaceLabels << "Faces";
+
+  setFixedSize((NUM_COLS_WED+NUM_COLS_VERT+NUM_COLS_FACE+3)*COLUMN_WIDTH,600);
+
+  //setSizePolicy(((NUM_COLS_WED+1)+NUM_COLS_VERT)*COLUMN_WIDTH , 600);
+  //setSizePolicy()
 
 }
 
 TableDialog::~TableDialog(){}
 
 void TableDialog::makeTable(std::vector<Wed*> * weds){
-  table->setColumnCount(weds->size());
+  WedTable->setColumnCount(NUM_COLS_WED);
   std::cout<< "Size weds: "<< weds->size() <<"\n";
-  table->setRowCount(9);
-  table->setVerticalHeaderLabels(labels);
+  WedTable->setRowCount(weds->size());
+  WedTable->setHorizontalHeaderLabels(WedLabels);
+  //WedTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  WedTable->setFixedSize((NUM_COLS_WED+1)*COLUMN_WIDTH,600);
+  for(int k = 0;k<NUM_COLS_WED+1;k++){
+      WedTable->setColumnWidth(k, COLUMN_WIDTH);
+  } 
 
   for(int i = 0; i<weds->size();i++){
     if(weds->at(i)==nullptr){
-      table->setItem(0, i, new QTableWidgetItem(QString("null")));
-      table->setItem(1, i, new QTableWidgetItem(QString("null")));
-      table->setItem(2, i, new QTableWidgetItem(QString("null")));
-      table->setItem(3, i, new QTableWidgetItem(QString("null")));
-      table->setItem(4, i, new QTableWidgetItem(QString("null")));
-      table->setItem(5, i, new QTableWidgetItem(QString("null")));
-      table->setItem(6, i, new QTableWidgetItem(QString("null")));
-      table->setItem(7, i, new QTableWidgetItem(QString("null")));
-      table->setItem(8, i, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 0, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 1, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 2, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 3, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 4, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 5, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 6, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 7, new QTableWidgetItem(QString("null")));
+      WedTable->setItem(i, 8, new QTableWidgetItem(QString("null")));
     }
     else{
-      table->setItem(0,i, new QTableWidgetItem(QString(weds->at(i)->debugWed())));
+      WedTable->setItem(i, 0, new QTableWidgetItem(QString(weds->at(i)->debugWed())));
 
       if(weds->at(i)->right_next != nullptr){
-        table->setItem(1,i, new QTableWidgetItem(QString(weds->at(i)->right_next->debugWed())));
+        WedTable->setItem(i, 1, new QTableWidgetItem(QString(weds->at(i)->right_next->debugWed())));
       }
       else{
-        table->setItem(1,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 1, new QTableWidgetItem(QString("null")));
       }
 
       if(weds->at(i)->right_prev != nullptr){
-        table->setItem(2,i, new QTableWidgetItem(QString(weds->at(i)->right_prev->debugWed())));
+        WedTable->setItem(i, 2, new QTableWidgetItem(QString(weds->at(i)->right_prev->debugWed())));
       }
       else{
-        table->setItem(2,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 2, new QTableWidgetItem(QString("null")));
       }
       
       if(weds->at(i)->left_next != nullptr){
-        table->setItem(3,i, new QTableWidgetItem(QString(weds->at(i)->left_next->debugWed())));
+        WedTable->setItem(i, 3, new QTableWidgetItem(QString(weds->at(i)->left_next->debugWed())));
       }
       else{
-        table->setItem(3,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 3, new QTableWidgetItem(QString("null")));
       }
 
       if(weds->at(i)->left_prev != nullptr){
-        table->setItem(4,i, new QTableWidgetItem(QString(weds->at(i)->left_prev->debugWed())));
+        WedTable->setItem(i, 4, new QTableWidgetItem(QString(weds->at(i)->left_prev->debugWed())));
       }
       else{
-        table->setItem(4,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 4, new QTableWidgetItem(QString("null")));
       }
 
       if(weds->at(i)->right != nullptr){
-        table->setItem(5,i, new QTableWidgetItem(QString(weds->at(i)->right->debugFace())));
+        WedTable->setItem(i, 5, new QTableWidgetItem(QString(weds->at(i)->right->debugFace())));
       }
       else{
-        table->setItem(5,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 5, new QTableWidgetItem(QString("null")));
       }
       
       if(weds->at(i)->left != nullptr){
-        table->setItem(6,i, new QTableWidgetItem(QString(weds->at(i)->left->debugFace())));
+        WedTable->setItem(i, 6, new QTableWidgetItem(QString(weds->at(i)->left->debugFace())));
       }
       else{
-        table->setItem(6,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 6, new QTableWidgetItem(QString("null")));
       }
       
       if(weds->at(i)->start != nullptr){
-        table->setItem(7,i, new QTableWidgetItem(QString(weds->at(i)->start->debugVertex())));
+        WedTable->setItem(i, 7, new QTableWidgetItem(QString(weds->at(i)->start->debugVertex())));
       }
       else{
-        table->setItem(7,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 7, new QTableWidgetItem(QString("null")));
       }
       if(weds->at(i)->end != nullptr){
-        table->setItem(8,i, new QTableWidgetItem(QString(weds->at(i)->end->debugVertex())));
+        WedTable->setItem(i, 8, new QTableWidgetItem(QString(weds->at(i)->end->debugVertex())));
       }
       else{
-        table->setItem(8,i, new QTableWidgetItem(QString("null")));
+        WedTable->setItem(i, 8, new QTableWidgetItem(QString("null")));
       }
-      
     }
   }
-  layout->addWidget(table);
+  layout->addWidget(WedTable);
+}
+
+void TableDialog::makeTable(std::vector<std::pair<glm::vec3,Vertex*>> * vertexes){
+  VertexTable->setColumnCount(NUM_COLS_VERT);
+  VertexTable->setRowCount(vertexes->size());
+  VertexTable->setHorizontalHeaderLabels(VertexLabels);
+  for(int k = 0;k<NUM_COLS_VERT;k++){
+      VertexTable->setColumnWidth(k, 160);
+  } 
+  VertexTable->setFixedSize((NUM_COLS_VERT+1)*COLUMN_WIDTH,600);
+
+
+  for(int i = 0; i<vertexes->size();i++){
+    if(vertexes->at(i).second==nullptr){
+      VertexTable->setItem(i, 0, new QTableWidgetItem(QString("null")));
+    }
+    else{
+      if(vertexes->at(i).second->edge != nullptr){
+        VertexTable->setItem(i, 0, new QTableWidgetItem(vertexes->at(i).second->edge->debugWed()));
+      }
+      else{
+        VertexTable->setItem(i, 0, new QTableWidgetItem(QString("null")));
+      }
+    }
+  }
+  layout->addWidget(VertexTable);
+}
+
+void TableDialog::makeTable(std::vector<Face*> * faces){
+  FaceTable->setColumnCount(NUM_COLS_FACE);
+  FaceTable->setRowCount(faces->size());
+  FaceTable->setHorizontalHeaderLabels(FaceLabels);
+  for(int k = 0;k<NUM_COLS_FACE;k++){
+      FaceTable->setColumnWidth(k, COLUMN_WIDTH);
+  } 
+  //FaceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  FaceTable->setFixedSize((NUM_COLS_FACE+1)*COLUMN_WIDTH,600);
+  std::cout<<faces->size()<<std::endl;
+  for(int i = 0; i<faces->size();i++){
+    if(faces->at(i)==nullptr){
+      FaceTable->setItem(i, 0, new QTableWidgetItem(QString("null")));
+    }
+    else{
+      if(faces->at(i)->edge != nullptr){
+        FaceTable->setItem(i, 0, new QTableWidgetItem(faces->at(i)->edge->debugWed()));
+      }
+      else{
+        FaceTable->setItem(i, 0, new QTableWidgetItem(QString("null")));
+      }
+    }
+  }
+  layout->addWidget(FaceTable);
+}
+
+void TableDialog::showTables(){
   setLayout(layout);
   show();
 }

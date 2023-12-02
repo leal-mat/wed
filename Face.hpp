@@ -8,8 +8,8 @@ class Face{
   public:
     Face(Wed *_wed = nullptr);
     QString debugFace();
-  public:
-    Wed * wed;
+    Wed * edge;
+    bool visit;
 };
 
 

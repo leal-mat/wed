@@ -1,9 +1,14 @@
 #include "Face.hpp"
+#include "Wed.hpp"
 
-Face::Face(Wed *_wed): wed(_wed){}
+Face::Face(Wed *_wed): edge(_wed), visit(false) {
+}
 
 QString Face::debugFace(){
-  return QString("face");
+  if(edge != nullptr){
+      return edge->debugWed();
+    }
+    return "null";
 }
 
 

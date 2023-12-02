@@ -21,6 +21,7 @@ class Wed{
     Wed *right_prev, *right_next;
     STATUS status;
     pair<int, int> edge;
+    bool visit;
 
 
     void rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> *edge_face_map,

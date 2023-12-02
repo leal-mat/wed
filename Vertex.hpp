@@ -14,7 +14,9 @@ class Vertex{
     
   public:
     int index;
+    glm::vec3 color;
     Wed *edge;
+    bool visit;
 };
 
 #endif // VERTEX_HPP
