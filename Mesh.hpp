@@ -15,7 +15,7 @@
 
 class Mesh : public GLObject{
 public:
-  Mesh();
+  Mesh(QOpenGLContext * context = nullptr);
   void buildMesh();
   void getMeshProperties(std::string fileName);
   void createWedVector();
@@ -32,7 +32,7 @@ public:
   void FE(Wed* e);
   void VE(Wed* e);
   void EF(Face* face);
-  void Draw() override;
+  void draw() override;
   void init() override;
 private:
   std::vector<Wed *> wed_vector;

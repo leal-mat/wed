@@ -1,9 +1,17 @@
-#include "camera.hpp"
+#include "Camera.hpp"
 
-Camera::Camera(glm::vec3 _pos = glm::vec3(0.,0.,0.), glm::vec3 _at = glm::vec3(0.,0.,0.)){
+Camera::Camera(glm::vec3 _pos, glm::vec3 _at){
     pos = _pos;
     at = _at;
     up = glm::vec3(0.,1.,0.);
+    yaw = 0.;
+    pitch = 0.;
+
+    fov = 90.;
+    near = 0.1;
+    far = 100.;
+    w = 200;
+    h = 200;
     updateCamera();
 }
 
@@ -42,7 +50,15 @@ glm::vec3 Camera::getAt() const{
     return at;
 }
 
+glm::mat4 & Camera::getViewMatrix(){
+    return viewMatrix;
+}
+
+glm::mat4 & Camera::getProjMatrix(){
+    return projMatrix;
+}
+
 void Camera::updateCamera(){
-    viewMatrix = glm::lookAt(pos,at,up);
-    projMatrix = glm::perspectiveFov(fov,w,h,near,far);
+    viewMatrix = glm::lookAtRH(pos,at,up);
+    projMatrix = glm::perspectiveFovRH(glm::radians(fov),w,h,near,far);
 }

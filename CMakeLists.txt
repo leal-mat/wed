@@ -23,7 +23,10 @@ qt_add_executable(
     Face.cpp
     Vertex.cpp
     TableDialog.cpp
-    #renderer/camera.cpp
+    WedTable.cpp
+    VertexTable.cpp
+    FaceTable.cpp
+    renderer/Camera.cpp
     renderer/GLProgram.cpp
     renderer/GLObject.hpp
     renderer/MyGLWidget.cpp

@@ -33,10 +33,11 @@ int main(int argc, char ** argv){
     auto f = m.getFaceVector();
     auto v = m.getVertexVector();
     
-    table.makeTable(&w);
-    table.makeTable(&v);
-    table.makeTable(&f);
+    table.makeTable(&w, &f, &v);
+    // table.makeTable(&v);
+    // table.makeTable(&f);
     table.showTables();
+    std::cout<<"Aqui\n";
     //mygl.show();
     
 

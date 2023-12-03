@@ -24,6 +24,9 @@ public:
     glm::vec3 getAt() const;
     glm::vec3 getPos() const;
 
+    glm::mat4 & getViewMatrix();
+    glm::mat4 & getProjMatrix();
+
 
 private:
     void updateCamera();

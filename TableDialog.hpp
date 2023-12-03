@@ -11,6 +11,9 @@
 #include <iostream>
 #include <vector>
 #include "Wed.hpp"
+#include "WedTable.hpp"
+#include "VertexTable.hpp"
+#include "FaceTable.hpp"
 
 #define COLUMN_WIDTH 100
 #define NUM_COLS_WED 9
@@ -19,19 +22,21 @@
 
 
 class TableDialog : public QDialog{
+  Q_OBJECT
   public:
   TableDialog(QWidget * parent = nullptr);
   ~TableDialog();
-  void makeTable(std::vector<Wed*> * weds);
-  void makeTable(std::vector<Face*> * faces);
-  void makeTable(std::vector<std::pair<glm::vec3,Vertex*>> * vertexes);
+  void makeTable(std::vector<Wed*> * weds, std::vector<Face*> * faces, std::vector<std::pair<glm::vec3,Vertex*>> * vertexes);
+  // void makeTable();
+  // void makeTable();
+  // void setTables(QTableWidget * wedTable, QTableWidget * FaceTable, QTableWidget * VertexTable);
   void showTables();
 
   public:
   QHBoxLayout * layout;
-  QTableWidget * WedTable;
-  QTableWidget * FaceTable;
-  QTableWidget * VertexTable;
+  WedTable * wedTable;
+  VertexTable * vertexTable;
+  FaceTable * faceTable;
   QStringList WedLabels;
   QStringList FaceLabels;
   QStringList VertexLabels;

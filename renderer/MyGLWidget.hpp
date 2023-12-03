@@ -22,6 +22,11 @@
 #include "GLProgram.hpp"
 #include <stdlib.h>
 #include <glm/vec3.hpp>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "Camera.hpp"
+#include "../Mesh.hpp"
 class MyGLWidget : public QOpenGLWidget{
 
   Q_OBJECT
@@ -43,11 +48,14 @@ public slots:
 
 //private:
 
-private:
+  private:
 
   QOpenGLFunctions_3_3_Core * f;
+  
 
   private:
+  Mesh * mesh;
+  Camera * camera;
 
 };
 

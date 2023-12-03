@@ -21,8 +21,11 @@ class GLObject : public QObject{
   public:
   GLObject() : QObject(){}
   virtual ~GLObject() = default;
-  virtual void Draw() = 0;
+  virtual void draw() = 0;
   virtual void init() = 0;
+  GLProgram & getProgram(uint idx){
+    return program[idx];
+  }
 
   protected:
   std::vector<GLProgram> program;
