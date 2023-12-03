@@ -2,7 +2,7 @@
 #define MAIN_WIDGET_H
 
 #include <QWidget>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <glm/vec3.hpp>
 
 #include "TableDialog.hpp"
@@ -20,7 +20,7 @@ public slots:
 private:
     TableDialog * tableDialog;
     MyGLWidget * mygl;
-    QHBoxLayout *layout;
+    QVBoxLayout *layout;
 };
 
 #endif // MAIN_WIDGET_H

@@ -8,7 +8,7 @@
 
 MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
 {
-    layout = new QHBoxLayout(this);
+    layout = new QVBoxLayout(this);
     tableDialog = new TableDialog(this);
     setFixedSize((NUM_COLS_WED+NUM_COLS_VERT+NUM_COLS_FACE+3)*COLUMN_WIDTH,1200);
     setContentsMargins(0, 0, 0, 0);
@@ -59,7 +59,7 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     auto v = m.getVertexesVector();
     tableDialog->makeTable(&w, &f, &v);
     tableDialog->showTables();
-    
+
     show();
 }
 
