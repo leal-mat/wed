@@ -26,7 +26,7 @@ class TableDialog : public QDialog{
   public:
   TableDialog(QWidget * parent = nullptr);
   ~TableDialog();
-  void makeTable(std::vector<Wed*> * weds, std::vector<Face*> * faces, std::vector<std::pair<glm::vec3,Vertex*>> * vertexes);
+  void makeTable(std::vector<Wed*> * weds, std::vector<Face*> * faces, std::vector<Vertex*> * vertexes);
   // void makeTable();
   // void makeTable();
   // void setTables(QTableWidget * wedTable, QTableWidget * FaceTable, QTableWidget * VertexTable);
@@ -37,11 +37,6 @@ class TableDialog : public QDialog{
   WedTable * wedTable;
   VertexTable * vertexTable;
   FaceTable * faceTable;
-  QStringList WedLabels;
-  QStringList FaceLabels;
-  QStringList VertexLabels;
-
-
 };
 
 #endif //TABLE_DIALOG

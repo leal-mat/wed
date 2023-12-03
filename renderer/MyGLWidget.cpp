@@ -6,7 +6,7 @@ using qtime = QDateTime;
 
 MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent){
     setFocusPolicy(Qt::TabFocus);
-    setFixedSize(900,600);
+    setFixedSize(600,600);
 }
 
 MyGLWidget::~MyGLWidget(){

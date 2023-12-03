@@ -4,9 +4,9 @@ TableDialog::TableDialog(QWidget * parent) : QDialog(parent){
   layout = new QHBoxLayout(this);
   //layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
 
-  // WedTable = new QTableWidget();
-  // VertexTable = new QTableWidget();
-  // FaceTable = new QTableWidget();
+  wedTable = new WedTable();
+  vertexTable = new VertexTable();
+  faceTable = new FaceTable();
 
   // WedTable->horizontalHeader()->setStretchLastSection(true);
   // WedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";
@@ -26,7 +26,7 @@ TableDialog::TableDialog(QWidget * parent) : QDialog(parent){
 
 TableDialog::~TableDialog(){}
 
-void TableDialog::makeTable(std::vector<Wed*> * weds, std::vector<Face*> * faces, std::vector<std::pair<glm::vec3,Vertex*>> * vertexes)
+void TableDialog::makeTable(std::vector<Wed*> * weds, std::vector<Face*> * faces, std::vector<Vertex*> * vertexes)
 {
   wedTable->makeWedTable(weds);
   vertexTable->makeVertexTable(vertexes);

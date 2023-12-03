@@ -94,11 +94,13 @@ void Mesh::getMeshProperties(std::string fileName)
             }
         }
     }
-    //unordered multimap:
+    // Para mostrar o que temos nos mapas, descomente essa secao; //
+
+    // unordered multimap:
     std::cout << "Indices\n";
     for (auto elem : edge_face_map) {
-      std::cout << "(" << elem.first.first << ", " << elem.first.second << "); "<<
-      "face: " << elem.second.x << " " << elem.second.y<< " " << elem.second.z << std::endl;
+      // std::cout << "(" << elem.first.first << ", " << elem.first.second << "); "<<
+      // "face: " << elem.second.x << " " << elem.second.y<< " " << elem.second.z << std::endl;
     }
     std::cout<<"Teste\n";
     pair<int,int> t1(4,2);
@@ -106,9 +108,10 @@ void Mesh::getMeshProperties(std::string fileName)
     std::cout<<"Quantidade de valores nessa key: " << edge_face_map.count(t1)<<std::endl;
     while(v != edge_face_map.end()) {
         auto i = *v;
-        std::cout<< "face: " << i.second.x << " " << i.second.y<< " " << i.second.z << std::endl;
+        // std::cout<< "face: " << i.second.x << " " << i.second.y<< " " << i.second.z << std::endl;
         v++;
     }
+
     //exit(-1);
     return;
 }
@@ -231,6 +234,12 @@ void Mesh::createWedVector(){
     }
 }
 
+void Mesh::createVertexesVector(){
+    for (auto elem : vertex_vector) {
+        vertexes_vector.push_back(elem.second);
+    }
+}
+
 void Mesh::createFaceVector(){
     for (auto elem : face_map) {
         face_vector.push_back(elem.second);
@@ -245,8 +254,8 @@ std::vector<Face *> Mesh::getFaceVector() {
     return face_vector;
 }
 
-std::vector<std::pair<glm::vec3, Vertex*>> Mesh::getVertexVector() {
-    return vertex_vector;
+std::vector<Vertex*> Mesh::getVertexesVector() {
+    return vertexes_vector;
 }
 
 // dado vértice, encontrar arestas adjacentes

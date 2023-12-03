@@ -20,9 +20,10 @@ public:
   void getMeshProperties(std::string fileName);
   void createWedVector();
   void createFaceVector();
+  void createVertexesVector();
   std::vector<Wed *> getWedVector();
   std::vector<Face *> getFaceVector();
-  std::vector<std::pair<glm::vec3, Vertex*>> getVertexVector();
+  std::vector<Vertex*> getVertexesVector();
   Wed* getBaseWed();
   void markFace(Face* face);
   void markEdge(Wed* edge);
@@ -37,6 +38,7 @@ public:
 private:
   std::vector<Wed *> wed_vector;
   std::vector<Face *> face_vector;
+  std::vector<Vertex *> vertexes_vector;
   Wed *base_wed;
 
   // Mapa de indice aresta<int,int> para vec3 de indices face 

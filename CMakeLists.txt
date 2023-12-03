@@ -30,6 +30,7 @@ qt_add_executable(
     renderer/GLProgram.cpp
     renderer/GLObject.hpp
     renderer/MyGLWidget.cpp
+    MainWidget.cpp
 )
 
 target_link_libraries(wed PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGLWidgets)

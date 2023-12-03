@@ -25,7 +25,7 @@ class VertexTable : public QDialog
 public:
   VertexTable();
   ~VertexTable();
-  void makeVertexTable(std::vector<std::pair<glm::vec3,Vertex*>> * vertexes);
+  void makeVertexTable(std::vector<Vertex*> * vertexes);
   QTableWidget * getVertexTable();
 private:
   QTableWidget * vertexTable;

@@ -15,7 +15,6 @@ WedTable::~WedTable()
 void WedTable::makeWedTable(std::vector<Wed*> * weds)
 {
   wedTable->setColumnCount(NUM_COLS_WED);
-  std::cout<< "Size weds: "<< weds->size() <<"\n";
   wedTable->setRowCount(weds->size());
   wedTable->setHorizontalHeaderLabels(wedLabels);
   wedTable->setFixedSize((NUM_COLS_WED+1)*COLUMN_WIDTH,600);

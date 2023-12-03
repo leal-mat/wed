@@ -9,7 +9,7 @@ VertexTable::VertexTable()
 
 VertexTable::~VertexTable(){}
 
-void VertexTable::makeVertexTable(std::vector<std::pair<glm::vec3,Vertex*>> * vertexes) {
+void VertexTable::makeVertexTable(std::vector<Vertex*> * vertexes) {
   vertexTable->setColumnCount(NUM_COLS_VERT);
   vertexTable->setRowCount(vertexes->size());
   vertexTable->setHorizontalHeaderLabels(vertexLabels);
@@ -20,12 +20,12 @@ void VertexTable::makeVertexTable(std::vector<std::pair<glm::vec3,Vertex*>> * ve
 
 
   for(int i = 0; i<vertexes->size();i++){
-    if(vertexes->at(i).second==nullptr){
+    if(vertexes->at(i)==nullptr){
       vertexTable->setItem(i, 0, new QTableWidgetItem(QString("null")));
     }
     else{
-      if(vertexes->at(i).second->edge != nullptr){
-        vertexTable->setItem(i, 0, new QTableWidgetItem(vertexes->at(i).second->edge->debugWed()));
+      if(vertexes->at(i)->edge != nullptr){
+        vertexTable->setItem(i, 0, new QTableWidgetItem(vertexes->at(i)->edge->debugWed()));
       }
       else{
         vertexTable->setItem(i, 0, new QTableWidgetItem(QString("null")));
