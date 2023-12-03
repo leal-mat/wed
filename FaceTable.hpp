@@ -19,7 +19,7 @@
 #define NUM_COLS_FACE 1
 
 
-class FaceTable : public QDialog
+class FaceTable : public QWidget
 {
 public:
     FaceTable();

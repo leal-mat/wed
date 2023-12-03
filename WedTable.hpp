@@ -19,7 +19,7 @@
 #define NUM_COLS_FACE 1
 
 
-class WedTable : public QDialog
+class WedTable : public QWidget
 {
   Q_OBJECT
 public:

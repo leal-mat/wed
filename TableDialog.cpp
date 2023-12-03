@@ -1,6 +1,6 @@
 #include "TableDialog.hpp"
 
-TableDialog::TableDialog(QWidget * parent) : QDialog(parent){
+TableDialog::TableDialog(QWidget * parent) : QWidget(parent){
   layout = new QHBoxLayout(this);
   //layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
 

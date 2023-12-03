@@ -19,7 +19,7 @@
 #define NUM_COLS_FACE 1
 
 
-class VertexTable : public QDialog
+class VertexTable : public QWidget
 {
   Q_OBJECT
 public:

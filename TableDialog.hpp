@@ -21,7 +21,7 @@
 #define NUM_COLS_FACE 1
 
 
-class TableDialog : public QDialog{
+class TableDialog : public QWidget {
   Q_OBJECT
   public:
   TableDialog(QWidget * parent = nullptr);
