@@ -13,8 +13,9 @@ class Vertex{
     QString debugVertex();
     
   public:
-    int index;
+    glm::vec3 pos;
     glm::vec3 color;
+    int index;
     Wed *edge;
     bool visit;
 };

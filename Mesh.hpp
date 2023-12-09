@@ -21,9 +21,10 @@ public:
   void createWedVector();
   void createFaceVector();
   void createVertexesVector();
-  std::vector<Wed *> getWedVector();
-  std::vector<Face *> getFaceVector();
-  std::vector<Vertex*> getVertexesVector();
+  std::vector<Wed *> & getWedVector();
+  std::vector<Face *> & getFaceVector();
+  std::vector<Vertex*> & getVertexesVector();
+  void updateMesh();
   Wed* getBaseWed();
   void markFace(Face* face);
   void markEdge(Wed* edge);
@@ -40,6 +41,7 @@ private:
   std::vector<Face *> face_vector;
   std::vector<Vertex *> vertexes_vector;
   Wed *base_wed;
+  std::vector<Vertex> raw_vertexes_vector;
 
   // Mapa de indice aresta<int,int> para vec3 de indices face 
   std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> edge_face_map;
@@ -55,6 +57,7 @@ private:
 
   // Index Vector
   std::vector<uint> idxVector;
+  std::vector<uint> edges_idx_vector;
 };
 
 #endif //MESH_HPP

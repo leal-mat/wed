@@ -260,6 +260,8 @@ Vertex* Wed::checkVertexVector(int index, std::vector<std::pair<glm::vec3, Verte
     }
     else{
         return_vertex = new Vertex(index, this);
+        return_vertex->color = glm::vec3(0.7,0.,0.7);
+        return_vertex->pos = vertex_vector->at(index).first; 
         vertex_vector->at(index).second = return_vertex;
     }
     return return_vertex;

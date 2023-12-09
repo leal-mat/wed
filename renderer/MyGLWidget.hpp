@@ -39,12 +39,18 @@ public:
   void paintGL() override;
   void resizeGL(int w, int h) override;
 
+
+  void setMesh(Mesh * _mesh);
+
+  Mesh * createMesh(QString fileName);
+
 signals:
   
 
 public slots:
   void updateScene();
   void initTimer();
+  
 
 //private:
 

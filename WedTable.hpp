@@ -31,6 +31,10 @@ public:
 private:
   QTableWidget * wedTable;
   QStringList wedLabels;
+
+public slots:
+  void testingSignalSlut();
+
 };
 
 

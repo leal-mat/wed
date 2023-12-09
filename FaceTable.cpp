@@ -20,7 +20,8 @@ void FaceTable::makeFaceTable(std::vector<Face*> * faces) {
       faceTable->setColumnWidth(k, COLUMN_WIDTH);
   } 
   //FaceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-  faceTable->setFixedSize((NUM_COLS_FACE+1)*COLUMN_WIDTH,600);
+  //faceTable->setFixedSize((NUM_COLS_FACE+1)*COLUMN_WIDTH,600);
+  faceTable->setFixedWidth((NUM_COLS_FACE+1)*COLUMN_WIDTH);
   std::cout<<faces->size()<<std::endl;
   for(int i = 0; i<faces->size();i++) {
     if(faces->at(i)==nullptr){

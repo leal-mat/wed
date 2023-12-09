@@ -16,7 +16,7 @@ void VertexTable::makeVertexTable(std::vector<Vertex*> * vertexes) {
   for(int k = 0;k<NUM_COLS_VERT;k++){
     vertexTable->setColumnWidth(k, 160);
   } 
-  vertexTable->setFixedSize((NUM_COLS_VERT+1)*COLUMN_WIDTH,600);
+  vertexTable->setFixedWidth((NUM_COLS_VERT+1)*COLUMN_WIDTH);
 
 
   for(int i = 0; i<vertexes->size();i++){

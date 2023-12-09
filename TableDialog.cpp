@@ -7,6 +7,8 @@ TableDialog::TableDialog(QWidget * parent) : QWidget(parent){
   wedTable = new WedTable();
   vertexTable = new VertexTable();
   faceTable = new FaceTable();
+  layout->setContentsMargins(0,0,0,0);
+  layout->setSpacing(0);
 
   // WedTable->horizontalHeader()->setStretchLastSection(true);
   // WedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";
@@ -17,10 +19,7 @@ TableDialog::TableDialog(QWidget * parent) : QWidget(parent){
   // FaceTable->horizontalHeader()->setStretchLastSection(true);
   // FaceLabels << "Faces";
 
-  setFixedSize((NUM_COLS_WED+NUM_COLS_VERT+NUM_COLS_FACE+3)*COLUMN_WIDTH,600);
-
-  //setSizePolicy(((NUM_COLS_WED+1)+NUM_COLS_VERT)*COLUMN_WIDTH , 600);
-  //setSizePolicy()
+  setFixedSize((NUM_COLS_WED+NUM_COLS_VERT+NUM_COLS_FACE+4)*COLUMN_WIDTH,400);
 
 }
 

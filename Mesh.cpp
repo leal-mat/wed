@@ -48,8 +48,10 @@ Mesh::Mesh(QOpenGLContext * context) {
   if(context == nullptr){
     std::cout<<"null context\n";
   }
+  else{
     currentContext = context;
     f = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_3_3_Core>(context);
+  }
 }
 
 void Mesh::getMeshProperties(std::string fileName)
@@ -78,7 +80,7 @@ void Mesh::getMeshProperties(std::string fileName)
             {
                 getValues(result[0], &points, result.substr(2, result.size() - 1));
                 glm::vec3 vertex(points.at(0), points.at(1), points.at(2));
-                vertex_vector.emplace_back(std::make_pair(vertex, nullptr/*new Vertex(vec_counter++)*/));
+                vertex_vector.emplace_back(std::make_pair(vertex, nullptr));
             }
             else if (result[0] == 'f' && result[1] == ' ')
             {
@@ -97,23 +99,36 @@ void Mesh::getMeshProperties(std::string fileName)
     // Para mostrar o que temos nos mapas, descomente essa secao; //
 
     // unordered multimap:
-    std::cout << "Indices\n";
-    for (auto elem : edge_face_map) {
-      // std::cout << "(" << elem.first.first << ", " << elem.first.second << "); "<<
-      // "face: " << elem.second.x << " " << elem.second.y<< " " << elem.second.z << std::endl;
-    }
-    std::cout<<"Teste\n";
-    pair<int,int> t1(4,2);
-    auto v = edge_face_map.find(t1);
-    std::cout<<"Quantidade de valores nessa key: " << edge_face_map.count(t1)<<std::endl;
-    while(v != edge_face_map.end()) {
-        auto i = *v;
-        // std::cout<< "face: " << i.second.x << " " << i.second.y<< " " << i.second.z << std::endl;
-        v++;
-    }
+    //std::cout << "Indices\n";
+    //for (auto elem : edge_face_map) {
+    //  // std::cout << "(" << elem.first.first << ", " << elem.first.second << "); "<<
+    //  // "face: " << elem.second.x << " " << elem.second.y<< " " << elem.second.z << std::endl;
+    //}
+    //std::cout<<"Teste\n";
+    //pair<int,int> t1(4,2);
+    //auto v = edge_face_map.find(t1);
+    //std::cout<<"Quantidade de valores nessa key: " << edge_face_map.count(t1)<<std::endl;
+    //while(v != edge_face_map.end()) {
+    //    auto i = *v;
+    //    // std::cout<< "face: " << i.second.x << " " << i.second.y<< " " << i.second.z << std::endl;
+    //    v++;
+    //}
 
     //exit(-1);
     return;
+}
+
+void Mesh::updateMesh(){
+  raw_vertexes_vector.clear();
+  edges_idx_vector.clear();
+  for(auto p : vertex_vector){
+    Vertex v = *(p.second);
+    raw_vertexes_vector.push_back(v);
+  }
+  for(auto q : wed_vector){
+    edges_idx_vector.push_back(q->edge.first);
+    edges_idx_vector.push_back(q->edge.second);
+  } 
 }
 
 void Mesh::init() {
@@ -135,8 +150,6 @@ void Mesh::init() {
   idxVector.reserve(vertex_vector.size());
   idxVector.resize(vertex_vector.size());
   std::iota(idxVector.begin(),idxVector.end(),0);
-  std::cout << "Idxvector.size : " << idxVector.size() << "\n";
-  std::cout << "FLOAT: "<< sizeof(float) << " SIZEOF VERTEX* " << sizeof(Vertex*) << std::endl;
 
   if(currentContext == nullptr){
     std::cout<<"null context 2\n";
@@ -147,7 +160,6 @@ void Mesh::init() {
     f->glGenBuffers(1,&EBO[i]);
     program[i] = GLProgram(currentContext);
   }
-  std::cout<<"Passou do loop.\n";
 
   //gpe
   program[0].createShaderFromFile("polShader.vert","polShader.frag");
@@ -161,21 +173,25 @@ void Mesh::init() {
   f->glBindVertexArray(VAO[0]);
   
   f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
-  f->glBufferData(GL_ARRAY_BUFFER, sizeof(std::pair<glm::vec3, Vertex*>) * vertex_vector.size(), vertex_vector.data(), GL_DYNAMIC_DRAW);
+  f->glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertex_vector.size()*10, raw_vertexes_vector.data(), GL_DYNAMIC_DRAW);
 
 
 
 
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[0]);
-  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * idxVector.size(), idxVector.data(), GL_DYNAMIC_DRAW);
+  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * idxVector.size()*10, idxVector.data(), GL_DYNAMIC_DRAW);
 
 
 
   GLint position_attribute = f->glGetAttribLocation(program[0].getProgramId(), "position");
+  GLint color_attribute = f->glGetAttribLocation(program[0].getProgramId(), "color_a");
 
-  f->glVertexAttribPointer(position_attribute, 3, GL_FLOAT,GL_FALSE, sizeof(std::pair<glm::vec3,Vertex*>), 0);
+
+  f->glVertexAttribPointer(position_attribute, 3, GL_FLOAT,GL_FALSE, sizeof(Vertex), 0);
+  f->glVertexAttribPointer(color_attribute, 3, GL_FLOAT,GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3)));
 
   f->glEnableVertexAttribArray(position_attribute);
+  f->glEnableVertexAttribArray(color_attribute);
 
   f->glBindBuffer(GL_ARRAY_BUFFER, 0); //unbid current VBO
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); //unbid current EBO
@@ -183,29 +199,134 @@ void Mesh::init() {
 
 
   //lines
+  f->glBindVertexArray(VAO[0]);
+  
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
+  //f->glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3) * wed_vector.size()*10, vertex_vector.data(),GL_DYNAMIC_DRAW);
+//
+//
+//
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
+  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * edges_idx_vector.size()*10 ,edges_idx_vector.data(),GL_DYNAMIC_DRAW);
+//
+//
+//
+  GLint position_attribute1 = f->glGetAttribLocation(program[0].getProgramId(), "position");
+  GLint color_attribute1 = f->glGetAttribLocation(program[0].getProgramId(), "color_a");
+//
+  f->glVertexAttribPointer(position_attribute1, 3, GL_FLOAT,GL_FALSE, sizeof(Vertex), 0);
+  f->glVertexAttribPointer(color_attribute1, 3, GL_FLOAT,GL_FALSE, sizeof(Vertex), (void*)(sizeof(glm::vec3)));
+//
+  f->glEnableVertexAttribArray(position_attribute1);
+  f->glEnableVertexAttribArray(color_attribute1);
+//
+//
+//
+  f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
+  f->glBindVertexArray(0); //unbind current VAO
+
+}
+
+void Mesh::draw() {
+  
+  f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+  f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
+
+  std::cout<<"0Drawing...\n";
+
+  void * ptrPoint = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
+  memcpy(ptrPoint, raw_vertexes_vector.data(), raw_vertexes_vector.size() * (sizeof(Vertex)));
+  f->glUnmapBuffer(GL_ARRAY_BUFFER);
+
+  std::cout<<"1Drawing...\n";
+
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[0]);
+
+  void * ptrPointEle = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
+  memcpy(ptrPointEle,idxVector.data(), idxVector.size()* sizeof(uint));
+  f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
+
+  f->glBindVertexArray(VAO[0]);
+
+  f->glUseProgram(program[0].getProgramId());
+  f->glDrawElements(GL_POINTS,idxVector.size(), GL_UNSIGNED_INT, idxVector.data());
+
+
+  //void * ptrPointEle1 = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
+  //memcpy(ptrPointEle1,edges_idx_vector.data(), edges_idx_vector.size()* sizeof(uint));
+  //f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+//
+  //f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[1]);
+//
+  //f->glBindVertexArray(VAO[0]);
+//
+  //f->glUseProgram(program[0].getProgramId());
+  //f->glDrawElements(GL_LINES,edges_idx_vector.size(), GL_UNSIGNED_INT, edges_idx_vector.data());
+
+
+  //f->glBindVertexArray(0);
+  //f->glBindBuffer(GL_ARRAY_BUFFER,0);
+  //f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+
+
   //f->glBindVertexArray(VAO[1]);
+  //f->glUseProgram(program[0].getProgramId());
+//
+//
+  //f->glDrawElements(GL_LINES,handHull.lVec().size()*2,GL_UNSIGNED_INT,handHull.lVec().data());
+//
+//
+//
+  //f->glBindVertexArray(0);
   //
-  //f->glBindBuffer(GL_ARRAY_BUFFER,VBO[1]);
-  //f->glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3) * vertex_vector.size(), vertex_vector.data(),GL_DYNAMIC_DRAW);
+  ////grid triangles
+  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+//
+  //f->glBindBuffer(GL_ARRAY_BUFFER,VBO[2]);
+//
+  //void * ptr = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
+  //memcpy(ptr,gridTriangles.data(),gridTriangles.size()* sizeof(Triangle));
+  //f->glUnmapBuffer(GL_ARRAY_BUFFER);
+//
+//
+  //f->glBindVertexArray(VAO[2]);
+//
+  //f->glUseProgram(program[0].getProgramId());
 //
 //
 //
-  //f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
-  //f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(std::pair<uint,uint>) * wed_vector.size() ,wed_vector.data(),GL_DYNAMIC_DRAW);
+  //f->glDrawArrays(GL_TRIANGLES,0,gridTriangles.size()*sizeof(Triangle));
+//
+  //f->glBindVertexArray(0);
+  //f->glBindBuffer(GL_ARRAY_BUFFER,0);
 //
 //
 //
-  //GLint position_attribute1 = f->glGetAttribLocation(program[0].getProgramId(), "position");
+  ////fill triangles
+  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+  //
+  //
+  //f->glBindBuffer(GL_ARRAY_BUFFER,VBO[3]);
 //
-  //f->glVertexAttribPointer(position_attribute1,3,GL_FLOAT,GL_FALSE,sizeof(glm::vec3),0);
+  //void * ptr1 = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
+  //memcpy(ptr1,triangles.data(),triangles.size()* sizeof(Triangle));
+  //f->glUnmapBuffer(GL_ARRAY_BUFFER);
 //
-  //f->glEnableVertexAttribArray(position_attribute1);
+//
+  //f->glBindVertexArray(VAO[3]);
+//
+  //f->glUseProgram(program[1].getProgramId());
 //
 //
 //
-  //f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
-  //f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
-  //f->glBindVertexArray(0); //unbind current VAO
+  //f->glDrawArrays(GL_TRIANGLES,0,triangles.size()*sizeof(Triangle));
+
+  //f->glBindVertexArray(0);
+  //f->glBindBuffer(GL_ARRAY_BUFFER,0);
 
 }
 
@@ -246,15 +367,15 @@ void Mesh::createFaceVector(){
     }
 }
 
-std::vector<Wed *> Mesh::getWedVector() {
+std::vector<Wed *> & Mesh::getWedVector() {
     return wed_vector;
 }
 
-std::vector<Face *> Mesh::getFaceVector() {
+std::vector<Face *> & Mesh::getFaceVector() {
     return face_vector;
 }
 
-std::vector<Vertex*> Mesh::getVertexesVector() {
+std::vector<Vertex*> & Mesh::getVertexesVector() {
     return vertexes_vector;
 }
 
@@ -328,85 +449,3 @@ void Mesh::markVertex(Vertex* vertex){
     std::cout << "Visitei o vértice: " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
 }
 
-void Mesh::draw() {
-    //std::cout<<"Drawing...\n";
-    
-  f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
-
-  void * ptrPoint = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
-  memcpy(ptrPoint,vertex_vector.data(),vertex_vector.size()* (sizeof(glm::vec3)+sizeof(Vertex*)));
-  f->glUnmapBuffer(GL_ARRAY_BUFFER);
-
-  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[0]);
-
-  void * ptrPointEle = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
-  memcpy(ptrPointEle,idxVector.data(), idxVector.size()* sizeof(uint));
-  f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-
-
-  f->glBindVertexArray(VAO[0]);
-
-  f->glUseProgram(program[0].getProgramId());
-  f->glDrawElements(GL_POINTS,idxVector.size(), GL_UNSIGNED_INT, idxVector.data());
-
-
-  f->glBindVertexArray(0);
-
-  //f->glBindVertexArray(VAO[1]);
-  //f->glUseProgram(program[0].getProgramId());
-//
-//
-  //f->glDrawElements(GL_LINES,handHull.lVec().size()*2,GL_UNSIGNED_INT,handHull.lVec().data());
-//
-//
-//
-  //f->glBindVertexArray(0);
-  //
-  ////grid triangles
-  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-//
-  //f->glBindBuffer(GL_ARRAY_BUFFER,VBO[2]);
-//
-  //void * ptr = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
-  //memcpy(ptr,gridTriangles.data(),gridTriangles.size()* sizeof(Triangle));
-  //f->glUnmapBuffer(GL_ARRAY_BUFFER);
-//
-//
-  //f->glBindVertexArray(VAO[2]);
-//
-  //f->glUseProgram(program[0].getProgramId());
-//
-//
-//
-  //f->glDrawArrays(GL_TRIANGLES,0,gridTriangles.size()*sizeof(Triangle));
-//
-  //f->glBindVertexArray(0);
-  //f->glBindBuffer(GL_ARRAY_BUFFER,0);
-//
-//
-//
-  ////fill triangles
-  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-  //
-  //
-  //f->glBindBuffer(GL_ARRAY_BUFFER,VBO[3]);
-//
-  //void * ptr1 = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
-  //memcpy(ptr1,triangles.data(),triangles.size()* sizeof(Triangle));
-  //f->glUnmapBuffer(GL_ARRAY_BUFFER);
-//
-//
-  //f->glBindVertexArray(VAO[3]);
-//
-  //f->glUseProgram(program[1].getProgramId());
-//
-//
-//
-  //f->glDrawArrays(GL_TRIANGLES,0,triangles.size()*sizeof(Triangle));
-
-  f->glBindVertexArray(0);
-  f->glBindBuffer(GL_ARRAY_BUFFER,0);
-
-}

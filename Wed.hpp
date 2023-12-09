@@ -15,12 +15,12 @@ class Wed{
   public:
     Wed(pair<int, int> _edge = pair<int,int>(-1,-1));
     ~Wed();
+    pair<int, int> edge;
     Vertex *start, *end;
     Face *left, *right;
     Wed *left_prev, *left_next;
     Wed *right_prev, *right_next;
     STATUS status;
-    pair<int, int> edge;
     bool visit;
 
 

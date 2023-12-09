@@ -4,8 +4,11 @@
 WedTable::WedTable()
 {
   wedTable = new QTableWidget();
+  wedTable->setContextMenuPolicy(Qt::CustomContextMenu);
   wedTable->horizontalHeader()->setStretchLastSection(true);
   wedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";
+
+  connect(wedTable, &QTableWidget::customContextMenuRequested, this, &WedTable::testingSignalSlut);
 }
 
 WedTable::~WedTable()
@@ -17,7 +20,7 @@ void WedTable::makeWedTable(std::vector<Wed*> * weds)
   wedTable->setColumnCount(NUM_COLS_WED);
   wedTable->setRowCount(weds->size());
   wedTable->setHorizontalHeaderLabels(wedLabels);
-  wedTable->setFixedSize((NUM_COLS_WED+1)*COLUMN_WIDTH,600);
+  wedTable->setFixedWidth((NUM_COLS_WED+1)*COLUMN_WIDTH);
   for(int k = 0;k<NUM_COLS_WED+1;k++){
     wedTable->setColumnWidth(k, COLUMN_WIDTH);
   } 
@@ -101,6 +104,13 @@ void WedTable::makeWedTable(std::vector<Wed*> * weds)
 
 QTableWidget * WedTable::getWedTable(){
   return wedTable;
+}
+
+
+void WedTable::testingSignalSlut()
+{
+  std::cout<<"testingSignalSlut\n";
+  return;
 }
 
 

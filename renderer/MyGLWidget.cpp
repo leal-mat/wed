@@ -6,7 +6,8 @@ using qtime = QDateTime;
 
 MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent){
     setFocusPolicy(Qt::TabFocus);
-    setFixedSize(600,400);
+    mesh = nullptr;
+    //setFixedSize(600,400);
 }
 
 MyGLWidget::~MyGLWidget(){
@@ -26,44 +27,26 @@ void MyGLWidget::initializeGL() {
 	f->glEnable(GL_LINE_SMOOTH);
 	f->glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     f->glEnable(GL_PROGRAM_POINT_SIZE);
-    f->glDisable(GL_CULL_FACE);
-    f->glPointSize(2);
+    //f->glDisable(GL_CULL_FACE);
+    f->glPointSize(3);
     f->glLineWidth(1);
 
 
-
-    mesh = new Mesh(context());
-    
-    mesh->getMeshProperties("orisso.obj");
-    std::cout<<"20\n";
-    mesh->init();
-    std::cout<<"30\n";
-    mesh->buildMesh();
-    std::cout<<"40\n";
-    mesh->createWedVector();
-    mesh->createFaceVector();
-    
     camera = new Camera(glm::vec3(0,0.,5.),glm::vec3(0.,0.,-1.));
     camera->setFov(45);
     camera->setViewPlanes(0.01,100.);
     camera->setCanvasDimensions(this->width(),this->height());
-
-    GLProgram p0 = mesh->getProgram(0);
-    uint p0ID = p0.getProgramId();
-    f->glUseProgram(p0ID);
-    GLuint vmatrix = f->glGetUniformLocation(p0ID, "m_view");
-    GLuint pmatrix = f->glGetUniformLocation(p0ID, "m_proj");
-    f->glUniformMatrix4fv(vmatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
-    f->glUniformMatrix4fv(pmatrix, 1, GL_FALSE, glm::value_ptr(camera->getProjMatrix()));
-
 
     f->glClearColor(45.0/255., 63/255., 133/255.,1.0f);
 
 }
 
 void MyGLWidget::paintGL(){
-  
-    mesh->draw();
+    if(mesh != nullptr){
+        mesh->updateMesh();
+        std::cout<<"Painting\n";
+        mesh->draw();
+    }
 }
 
 
@@ -81,6 +64,16 @@ void MyGLWidget::updateScene(){
     makeCurrent();
 
     doneCurrent();
+}
+
+void MyGLWidget::setMesh(Mesh * _mesh){
+    makeCurrent();    
+    mesh = _mesh;
+
+    update();
+    doneCurrent();
+    
+    
 }
 
 bool MyGLWidget::event(QEvent *event)
@@ -113,3 +106,33 @@ bool MyGLWidget::event(QEvent *event)
 	return QOpenGLWidget::event(event);
 
 }
+
+
+Mesh * MyGLWidget::createMesh(QString fileName)
+{
+    makeCurrent();
+    mesh = new Mesh(context());
+    mesh->getMeshProperties(fileName.toStdString());
+    mesh->init();
+    
+    GLProgram p0 = mesh->getProgram(0);
+    uint p0ID = p0.getProgramId();
+    f->glUseProgram(p0ID);
+    GLuint vmatrix = f->glGetUniformLocation(p0ID, "m_view");
+    GLuint pmatrix = f->glGetUniformLocation(p0ID, "m_proj");
+    f->glUniformMatrix4fv(vmatrix, 1, GL_FALSE, glm::value_ptr(camera->getViewMatrix()));
+    f->glUniformMatrix4fv(pmatrix, 1, GL_FALSE, glm::value_ptr(camera->getProjMatrix()));
+    
+    
+    mesh->buildMesh();
+    mesh->createWedVector();
+    mesh->createVertexesVector();
+    mesh->createFaceVector();
+
+
+
+    update();
+    doneCurrent();
+    return mesh;
+}
+
