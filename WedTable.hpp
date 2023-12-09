@@ -31,9 +31,10 @@ public:
 private:
   QTableWidget * wedTable;
   QStringList wedLabels;
+  std::string currentVal;
 
 public slots:
-  void testingSignalSlut();
+  void popupContextMenuWed(QPoint pos);
 
 };
 

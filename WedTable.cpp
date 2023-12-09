@@ -1,4 +1,7 @@
 #include "WedTable.hpp"
+#include <QMenu>
+#include <QPoint>
+#include <QAction>
 
 
 WedTable::WedTable()
@@ -6,9 +9,10 @@ WedTable::WedTable()
   wedTable = new QTableWidget();
   wedTable->setContextMenuPolicy(Qt::CustomContextMenu);
   wedTable->horizontalHeader()->setStretchLastSection(true);
+  wedTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
   wedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";
 
-  connect(wedTable, &QTableWidget::customContextMenuRequested, this, &WedTable::testingSignalSlut);
+  connect(wedTable, &QTableWidget::customContextMenuRequested, this, &WedTable::popupContextMenuWed);
 }
 
 WedTable::~WedTable()
@@ -96,9 +100,10 @@ void WedTable::makeWedTable(std::vector<Wed*> * weds)
       }
     }
   }
-  QTableWidget::connect(wedTable, &QTableWidget::itemClicked, this, [=](QTableWidgetItem *content) -> void
+  QTableWidget::connect(wedTable, &QTableWidget::itemPressed, this, [this](QTableWidgetItem *content) -> void
                         {
-                          std::cout << "CONTEUDO: " << content->text().toStdString() << "\n";
+                          std::cout << "CONTEUDO: " << content->text().toStdString() << "row: " << content->row() << "column: " << content->column() << "\n";
+                          currentVal = content->text().toStdString();
                         });
 }
 
@@ -107,10 +112,35 @@ QTableWidget * WedTable::getWedTable(){
 }
 
 
-void WedTable::testingSignalSlut()
+void WedTable::popupContextMenuWed(QPoint pos)
 {
-  std::cout<<"testingSignalSlut\n";
+
+  std::cout << "CONTEUDO: " << currentVal << "\n";
+
+
+  QAction *pAddAction = new QAction("Add",this);
+  connect(pAddAction, &QAction::triggered, this, [this]() -> void
+                        {
+                          std::cout << "Adding something\n";
+                        });
+
+  QAction *pRemoveAction = new QAction("Remove", this);
+  connect(pRemoveAction, &QAction::triggered, this, [this]() -> void
+                        {
+                          std::cout << "Removing something\n";
+                        });
+
+  QAction *pUpdateAction = new QAction("Update", this);
+  connect(pUpdateAction, &QAction::triggered, this, [this]() -> void
+                        {
+                          std::cout << "Updating something\n";
+                        });
+
+  QMenu *menu = new QMenu(this);
+  menu->addAction(pAddAction);
+  menu->addAction(pRemoveAction);
+  menu->addAction(pUpdateAction);
+  // menu->popup(wedTable->treeWidget->header()->mapToGlobal(pos));
+  menu->popup(wedTable->mapToGlobal(pos));
   return;
 }
-
-

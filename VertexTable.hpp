@@ -30,6 +30,12 @@ public:
 private:
   QTableWidget * vertexTable;
   QStringList vertexLabels;
+  int currentIndex;
+  std::string currentVal;
+
+
+public slots:
+  void popupContextMenuVertex(QPoint pos);
 };
 
 

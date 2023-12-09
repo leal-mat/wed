@@ -29,6 +29,11 @@ public:
 private:
     QTableWidget * faceTable;
     QStringList faceLabels;
+    int currentIndex;
+    std::string currentVal;
+
+public slots:
+    void popupContextMenuFace(QPoint pos);
 };
 
 

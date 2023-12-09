@@ -1,10 +1,17 @@
 #include "FaceTable.hpp"
+#include <QMenu>
+#include <QAction>
+#include <QPoint>
 
 FaceTable::FaceTable()
 {
   faceTable = new QTableWidget();
+  faceTable->setContextMenuPolicy(Qt::CustomContextMenu);
   faceTable->horizontalHeader()->setStretchLastSection(true);
+  faceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
   faceLabels << "Faces";
+
+  connect(faceTable, &QTableWidget::customContextMenuRequested, this, &FaceTable::popupContextMenuFace);
 }
 
 FaceTable::~FaceTable()
@@ -36,8 +43,55 @@ void FaceTable::makeFaceTable(std::vector<Face*> * faces) {
       }
     }
   }
+
+
+  QTableWidget::connect(faceTable, &QAbstractItemView::clicked, this, [this](const QModelIndex& idx) -> void
+                        {
+                          std::cout << "Clicked: " << idx.row()<<", "<<idx.column()<<"\n";
+                          currentIndex = idx.row();
+                        });
+
+  QTableWidget::connect(faceTable, &QTableWidget::itemPressed, this, [this](QTableWidgetItem *content) -> void
+                        {
+                          std::cout << "CONTEUDO: " << content->text().toStdString() << "row: " << content->row() << "column: " << content->column() << "\n";
+                          currentVal = content->text().toStdString();
+                        });
+
 }
 
 QTableWidget * FaceTable::getFaceTable() {
   return faceTable;
+}
+
+
+void FaceTable::popupContextMenuFace(QPoint pos)
+{
+
+  std::cout << "CONTEUDO: " << currentVal << "\n";
+
+
+  QAction *pAddAction = new QAction("Add",this);
+  connect(pAddAction, &QAction::triggered, this, [this]() -> void
+                        {
+                          std::cout << "Adding something\n";
+                        });
+
+  QAction *pRemoveAction = new QAction("Remove", this);
+  connect(pRemoveAction, &QAction::triggered, this, [this]() -> void
+                        {
+                          std::cout << "Removing something\n";
+                        });
+
+  QAction *pUpdateAction = new QAction("Update", this);
+  connect(pUpdateAction, &QAction::triggered, this, [this]() -> void
+                        {
+                          std::cout << "Updating something\n";
+                        });
+
+  QMenu *menu = new QMenu(this);
+  menu->addAction(pAddAction);
+  menu->addAction(pRemoveAction);
+  menu->addAction(pUpdateAction);
+  menu->popup(faceTable->mapToGlobal(pos));
+  return;
 }
