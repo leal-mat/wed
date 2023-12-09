@@ -29,7 +29,7 @@ void MyGLWidget::initializeGL() {
     f->glEnable(GL_PROGRAM_POINT_SIZE);
     //f->glDisable(GL_CULL_FACE);
     f->glPointSize(3);
-    f->glLineWidth(1);
+    f->glLineWidth(2);
 
 
     camera = new Camera(glm::vec3(0,0.,5.),glm::vec3(0.,0.,-1.));

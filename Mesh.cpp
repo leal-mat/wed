@@ -199,15 +199,16 @@ void Mesh::init() {
 
 
   //lines
-  f->glBindVertexArray(VAO[0]);
+  f->glBindVertexArray(VAO[1]);
   
   f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
-  //f->glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3) * wed_vector.size()*10, vertex_vector.data(),GL_DYNAMIC_DRAW);
+  f->glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertex_vector.size()*10, raw_vertexes_vector.data(), GL_DYNAMIC_DRAW);
 //
 //
 //
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[1]);
-  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * edges_idx_vector.size()*10 ,edges_idx_vector.data(),GL_DYNAMIC_DRAW);
+  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 10000 ,edges_idx_vector.data(),GL_DYNAMIC_DRAW);
+  
 //
 //
 //
@@ -230,7 +231,7 @@ void Mesh::init() {
 
 void Mesh::draw() {
   
-  f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
   f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
@@ -250,22 +251,31 @@ void Mesh::draw() {
   f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
 
-  f->glBindVertexArray(VAO[0]);
+  f->glBindVertexArray(VAO[1]);
 
   f->glUseProgram(program[0].getProgramId());
   f->glDrawElements(GL_POINTS,idxVector.size(), GL_UNSIGNED_INT, idxVector.data());
 
+  std::cout<<"2Drawing...\n";
 
-  //void * ptrPointEle1 = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
-  //memcpy(ptrPointEle1,edges_idx_vector.data(), edges_idx_vector.size()* sizeof(uint));
-  //f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[1]);
+
+  void * ptrPointEle1 = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
+  memcpy(ptrPointEle1,edges_idx_vector.data(), edges_idx_vector.size()* sizeof(uint));
+  f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
+  std::cout<<"3Drawing...\n";
 //
-  //f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[1]);
+  
 //
-  //f->glBindVertexArray(VAO[0]);
+  f->glBindVertexArray(VAO[0]);
 //
-  //f->glUseProgram(program[0].getProgramId());
-  //f->glDrawElements(GL_LINES,edges_idx_vector.size(), GL_UNSIGNED_INT, edges_idx_vector.data());
+  f->glUseProgram(program[0].getProgramId());
+  f->glDrawElements(GL_LINES,edges_idx_vector.size(), GL_UNSIGNED_INT, edges_idx_vector.data());
+
+  std::cout<<"4Drawing...\n";
+  std::cout<<"Wed size:" <<edges_idx_vector.size() << "\n";
+
 
 
   //f->glBindVertexArray(0);
