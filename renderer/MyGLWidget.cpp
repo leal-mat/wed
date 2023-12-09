@@ -5,7 +5,7 @@ using qtime = QDateTime;
 
 
 MyGLWidget::MyGLWidget(QWidget * parent) : QOpenGLWidget(parent){
-    setFocusPolicy(Qt::TabFocus);
+    setFocusPolicy(Qt::ClickFocus);
     mesh = nullptr;
     //setFixedSize(600,400);
 }
@@ -32,7 +32,7 @@ void MyGLWidget::initializeGL() {
     f->glLineWidth(2);
 
 
-    camera = new Camera(glm::vec3(0,0.,5.),glm::vec3(0.,0.,-1.));
+    camera = new Camera(glm::vec3(0,0.,4.),glm::vec3(0.,0.,-1.));
     camera->setFov(45);
     camera->setViewPlanes(0.01,100.);
     camera->setCanvasDimensions(this->width(),this->height());
@@ -55,16 +55,10 @@ void MyGLWidget::resizeGL(int w, int h){
 
 }
 
-void MyGLWidget::initTimer(){
+Camera * MyGLWidget::getCamera(){
+    return camera;
 }
 
-
-void MyGLWidget::updateScene(){
-
-    makeCurrent();
-
-    doneCurrent();
-}
 
 void MyGLWidget::setMesh(Mesh * _mesh){
     makeCurrent();    
@@ -76,35 +70,65 @@ void MyGLWidget::setMesh(Mesh * _mesh){
     
 }
 
-bool MyGLWidget::event(QEvent *event)
-{
 
-	if (event->type() == QEvent::KeyPress)
-	{
+void MyGLWidget::keyPressEvent(QKeyEvent * keyEvent){
+    makeCurrent();
 
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		if (keyEvent->key() == Qt::Key_P)
-		{
-            std::cout<< "Paused\n";
-            //timer.stop();
-        }
-
-        if (keyEvent->key() == Qt::Key_S)
-		{
-            std::cout<<"Started\n";
-            //timer.start();
-        }
-
-        if(keyEvent->key() == Qt::Key_R){
-            std::cout<<"Reseted\n";
-        }
+	if (keyEvent->key() == Qt::Key_W){
+        camera->walkFront();
     }
 
+    else if (keyEvent->key() == Qt::Key_S){
+       camera->walkBack(); 
+    }
 
+    else if (keyEvent->key() == Qt::Key_D){
+       camera->walkRight(); 
+    }
 
+    else if (keyEvent->key() == Qt::Key_A){
+       camera->walkLeft(); 
+    }
+    update();
+    doneCurrent();
+}
 
-	return QOpenGLWidget::event(event);
+void MyGLWidget::mousePressEvent(QMouseEvent* evt)
+{
+    virtualPos = evt->pos();
+    setCursor(Qt::BlankCursor);
+    QCursor::setPos(mapToGlobal(rect().center()));
+    update();
+    // sceneManager->callMousePressEventHandler(virtual_pos);
+    QWidget::mousePressEvent(evt);
+    
+    std::cout<<"CLICADO\n";
+}
 
+void MyGLWidget::mouseReleaseEvent(QMouseEvent* evt){
+    std::cout<<"SOLTADO\n";
+    QCursor::setPos(mapToGlobal(virtualPos));
+    setCursor(Qt::ArrowCursor);
+    // sceneManager->callMouseReleaseEventHandler(virtual_pos);
+    QWidget::mouseReleaseEvent(evt);
+}
+
+void MyGLWidget::mouseMoveEvent(QMouseEvent* evt){
+if (evt->buttons() & Qt::LeftButton && evt->pos() != rect().center())
+    {
+        virtualPos += (evt->pos() - rect().center());
+
+        //uncomment if you want wrap behavior
+        //virtual_pos.setX((virtual_pos.x() + width()) % width());
+        //virtual_pos.setY((virtual_pos.y() + height()) % height());
+
+        virtualPos.setX(qBound(0, virtualPos.x(), width()));
+        virtualPos.setY(qBound(0, virtualPos.y(), height()));
+        QCursor::setPos(mapToGlobal(rect().center()));
+        update();
+        // sceneManager->callMouseMoveEventHandler(virtual_pos);
+    }
+    QWidget::mouseMoveEvent(evt);
 }
 
 
@@ -112,8 +136,10 @@ Mesh * MyGLWidget::createMesh(QString fileName)
 {
     makeCurrent();
     mesh = new Mesh(context());
+    mesh->setGLWidget(this);
     mesh->getMeshProperties(fileName.toStdString());
     mesh->init();
+
     
     GLProgram p0 = mesh->getProgram(0);
     uint p0ID = p0.getProgramId();

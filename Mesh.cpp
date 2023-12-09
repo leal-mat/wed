@@ -1,11 +1,5 @@
 #include "Mesh.hpp"
-#include <utility>
-#include <filesystem>
-#include <QString>
-#include <QDir>
-#include <fstream>
-#include <iostream>
-#include <algorithm>
+#include "renderer/MyGLWidget.hpp"
 
 Wed* Mesh::getBaseWed(){
     return base_wed;
@@ -131,6 +125,10 @@ void Mesh::updateMesh(){
   } 
 }
 
+void Mesh::setGLWidget(MyGLWidget * mgl){
+  glWidget = mgl;
+}
+
 void Mesh::init() {
  
   //pontos e linhas, por enquanto...
@@ -231,18 +229,24 @@ void Mesh::init() {
 
 void Mesh::draw() {
   
-  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+  f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
   f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  uint p0ID = program[0].getProgramId();
+
+  f->glUseProgram(p0ID);
+  GLuint vmatrix = f->glGetUniformLocation(p0ID, "m_view");
+  GLuint pmatrix = f->glGetUniformLocation(p0ID, "m_proj");
+  f->glUniformMatrix4fv(vmatrix, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getViewMatrix()));
+  f->glUniformMatrix4fv(pmatrix, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getProjMatrix()));
 
   f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
 
-  std::cout<<"0Drawing...\n";
 
   void * ptrPoint = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
   memcpy(ptrPoint, raw_vertexes_vector.data(), raw_vertexes_vector.size() * (sizeof(Vertex)));
   f->glUnmapBuffer(GL_ARRAY_BUFFER);
 
-  std::cout<<"1Drawing...\n";
 
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[0]);
 
@@ -256,7 +260,6 @@ void Mesh::draw() {
   f->glUseProgram(program[0].getProgramId());
   f->glDrawElements(GL_POINTS,idxVector.size(), GL_UNSIGNED_INT, idxVector.data());
 
-  std::cout<<"2Drawing...\n";
 
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[1]);
 
@@ -264,80 +267,19 @@ void Mesh::draw() {
   memcpy(ptrPointEle1,edges_idx_vector.data(), edges_idx_vector.size()* sizeof(uint));
   f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
-  std::cout<<"3Drawing...\n";
-//
-  
-//
+
+
   f->glBindVertexArray(VAO[0]);
-//
+
   f->glUseProgram(program[0].getProgramId());
   f->glDrawElements(GL_LINES,edges_idx_vector.size(), GL_UNSIGNED_INT, edges_idx_vector.data());
 
-  std::cout<<"4Drawing...\n";
-  std::cout<<"Wed size:" <<edges_idx_vector.size() << "\n";
 
+  f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
+  f->glBindVertexArray(0); //unbind current VAO
 
-
-  //f->glBindVertexArray(0);
-  //f->glBindBuffer(GL_ARRAY_BUFFER,0);
-  //f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-
-
-  //f->glBindVertexArray(VAO[1]);
-  //f->glUseProgram(program[0].getProgramId());
-//
-//
-  //f->glDrawElements(GL_LINES,handHull.lVec().size()*2,GL_UNSIGNED_INT,handHull.lVec().data());
-//
-//
-//
-  //f->glBindVertexArray(0);
-  //
-  ////grid triangles
-  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-//
-  //f->glBindBuffer(GL_ARRAY_BUFFER,VBO[2]);
-//
-  //void * ptr = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
-  //memcpy(ptr,gridTriangles.data(),gridTriangles.size()* sizeof(Triangle));
-  //f->glUnmapBuffer(GL_ARRAY_BUFFER);
-//
-//
-  //f->glBindVertexArray(VAO[2]);
-//
-  //f->glUseProgram(program[0].getProgramId());
-//
-//
-//
-  //f->glDrawArrays(GL_TRIANGLES,0,gridTriangles.size()*sizeof(Triangle));
-//
-  //f->glBindVertexArray(0);
-  //f->glBindBuffer(GL_ARRAY_BUFFER,0);
-//
-//
-//
-  ////fill triangles
-  //f->glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-  //
-  //
-  //f->glBindBuffer(GL_ARRAY_BUFFER,VBO[3]);
-//
-  //void * ptr1 = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
-  //memcpy(ptr1,triangles.data(),triangles.size()* sizeof(Triangle));
-  //f->glUnmapBuffer(GL_ARRAY_BUFFER);
-//
-//
-  //f->glBindVertexArray(VAO[3]);
-//
-  //f->glUseProgram(program[1].getProgramId());
-//
-//
-//
-  //f->glDrawArrays(GL_TRIANGLES,0,triangles.size()*sizeof(Triangle));
-
-  //f->glBindVertexArray(0);
-  //f->glBindBuffer(GL_ARRAY_BUFFER,0);
-
+  
 }
 
 

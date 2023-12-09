@@ -36,23 +36,6 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     layout->addWidget(tableDialog);
     setLayout(layout);
     connect(chooseFile, &QComboBox::activated,this,&MainWidget::fileChosen);
-
-
-
-    //     Mesh m = Mesh(mygl->context());
-    //     m.getMeshProperties("orisso.obj");
-    //     m.buildMesh();
-    //     m.createWedVector();
-    //     m.createVertexesVector();
-    //     m.createFaceVector();
-
-    //     auto w = m.getWedVector();
-    //     auto f = m.getFaceVector();
-    //     auto v = m.getVertexesVector();
-    //     tableDialog->makeTable(&w, &f, &v);
-    //     tableDialog->showTables();
-
-    //mygl->show();
     show();
 }
 

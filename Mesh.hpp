@@ -10,7 +10,18 @@
 #include <functional>
 #include "Utils.hpp"
 #include <numeric>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <utility>
+#include <filesystem>
+#include <QString>
+#include <QDir>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
 #include "renderer/GLObject.hpp"
+
+class MyGLWidget;
 
 
 class Mesh : public GLObject{
@@ -36,6 +47,7 @@ public:
   void EF(Face* face);
   void draw() override;
   void init() override;
+  void setGLWidget(MyGLWidget *);
 private:
   std::vector<Wed *> wed_vector;
   std::vector<Face *> face_vector;
@@ -58,6 +70,8 @@ private:
   // Index Vector
   std::vector<uint> idxVector;
   std::vector<uint> edges_idx_vector;
+
+  MyGLWidget * glWidget;
 };
 
 #endif //MESH_HPP

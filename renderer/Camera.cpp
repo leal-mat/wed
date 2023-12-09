@@ -1,4 +1,5 @@
 #include "Camera.hpp"
+#include <iostream>
 
 Camera::Camera(glm::vec3 _pos, glm::vec3 _at){
     pos = _pos;
@@ -58,7 +59,30 @@ glm::mat4 & Camera::getProjMatrix(){
     return projMatrix;
 }
 
+void Camera::walkRight(){
+    pos.x += speed;
+    updateCamera();
+}
+
+void Camera::walkLeft(){
+    pos.x -= speed;
+    updateCamera();
+}
+
+void Camera::walkFront(){
+    pos.z -= speed;
+    updateCamera();
+}
+
+void Camera::walkBack(){
+    pos.z += speed;
+    updateCamera();
+}
+
+
+
 void Camera::updateCamera(){
-    viewMatrix = glm::lookAtRH(pos,at,up);
+    viewMatrix = glm::lookAtRH(pos,pos+at,up);
     projMatrix = glm::perspectiveFovRH(glm::radians(fov),w,h,near,far);
+
 }

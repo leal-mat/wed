@@ -27,6 +27,11 @@ public:
     glm::mat4 & getViewMatrix();
     glm::mat4 & getProjMatrix();
 
+    void walkRight();
+    void walkLeft();
+    void walkFront();
+    void walkBack();
+
 
 private:
     void updateCamera();

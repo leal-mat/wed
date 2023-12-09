@@ -25,6 +25,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <QtGlobal>
 #include "Camera.hpp"
 #include "../Mesh.hpp"
 class MyGLWidget : public QOpenGLWidget{
@@ -33,23 +34,26 @@ class MyGLWidget : public QOpenGLWidget{
 public:
   MyGLWidget(QWidget * parent = 0);
   ~MyGLWidget();
-  bool event(QEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
 
   void initializeGL() override;
   void paintGL() override;
   void resizeGL(int w, int h) override;
-
+  void mousePressEvent(QMouseEvent* evt) override;
+  void mouseReleaseEvent(QMouseEvent* evt) override;
+  void mouseMoveEvent(QMouseEvent* evt) override;
 
   void setMesh(Mesh * _mesh);
 
   Mesh * createMesh(QString fileName);
 
+  Camera * getCamera();
+
 signals:
   
 
 public slots:
-  void updateScene();
-  void initTimer();
+
   
 
 //private:
@@ -62,6 +66,8 @@ public slots:
   private:
   Mesh * mesh;
   Camera * camera;
+
+  QPoint virtualPos;
 
 };
 
