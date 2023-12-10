@@ -76,8 +76,8 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
     std::cout << "VALOR ATUAL: "<< currentVal<<"\n";
     std::cout << "COLUNA ATUAL: "<< currentCol<<"\n";
     std::cout << "LINHA ATUAL: "<< currentRow<<"\n";
-
-
+    currentMesh->clearMarkedEdges();
+    currentMesh->updateMesh();
     switch(actionId) {
         case 0:
             std::cout<<"EV\n";
@@ -96,6 +96,7 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
                 std::cout <<"Terceiro valor: " << vec.at(2) << "\n";
                 auto vertexVal = currentMesh->consultVertexesVector(vec.at(2));
                 if(vertexVal != nullptr){
+                    //currentMesh->clearMarkedEdges();
                     currentMesh->EV(vertexVal);
                 }
             }
@@ -117,6 +118,7 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
                 std::cout <<"Segundo valor: " << vec.at(1) << "\n";
 
                 pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+                //currentMesh->clearMarkedEdges();
                 currentMesh->EE(currentMesh->consultEdgeCreationMap(pairToSearch));
                 emit adjOperatorDone();
             }
@@ -139,6 +141,7 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
                 std::cout <<"Segundo valor: " << vec.at(1) << "\n";
 
                 pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+                //currentMesh->clearMarkedEdges();
                 currentMesh->FE(currentMesh->consultEdgeCreationMap(pairToSearch));
                 emit adjOperatorDone();
             }
@@ -160,6 +163,7 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
                 std::cout <<"Segundo valor: " << vec.at(1) << "\n";
 
                 pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+                //currentMesh->clearMarkedEdges();
                 currentMesh->FE(currentMesh->consultEdgeCreationMap(pairToSearch));
                 emit adjOperatorDone();
             }
@@ -183,6 +187,7 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
                 pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
                 auto faceVal = currentMesh->consultFaceVector(pairToSearch);
                 if(faceVal != nullptr){
+                    //currentMesh->clearMarkedEdges();
                     currentMesh->EF(faceVal);
                     emit adjOperatorDone();
                 }

@@ -50,6 +50,7 @@ public:
   void draw() override;
   void init() override;
   void setGLWidget(MyGLWidget *);
+  void clearMarkedEdges();
 private:
   std::vector<Wed *> wed_vector;
   std::vector<Face *> face_vector;
@@ -72,6 +73,7 @@ private:
   // Index Vector
   std::vector<uint> idxVector;
   std::vector<uint> edges_idx_vector;
+  std::vector<uint> marked_idx_vector;
 
   MyGLWidget * glWidget;
 };

@@ -44,7 +44,7 @@ void MyGLWidget::initializeGL() {
 void MyGLWidget::paintGL(){
     if(mesh != nullptr){
         mesh->updateMesh();
-        std::cout<<"Painting\n";
+        //std::cout<<"Painting\n";
         mesh->draw();
     }
 }
@@ -104,16 +104,16 @@ void MyGLWidget::mousePressEvent(QMouseEvent* evt)
     //virtualPos = evt->pos();
     //setCursor(Qt::BlankCursor);
     QCursor::setPos(mapToGlobal(rect().center()));
-    std::cout << "VirtualPos click: " << virtualPos.x() << "," << virtualPos.y() << "\n";
+    //std::cout << "VirtualPos click: " << virtualPos.x() << "," << virtualPos.y() << "\n";
     update();
     // sceneManager->callMousePressEventHandler(virtual_pos);
     QWidget::mousePressEvent(evt);
     
-    std::cout<<"CLICADO\n";
+    //std::cout<<"CLICADO\n";
 }
 
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* evt){
-    std::cout<<"SOLTADO\n";
+    //std::cout<<"SOLTADO\n";
     //QCursor::setPos(mapToGlobal(virtualPos));
     QCursor::setPos(mapToGlobal(rect().center()));
     virtualPos = QPoint(0,0);
@@ -123,7 +123,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* evt){
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* evt){
-    setCursor(Qt::BlankCursor);
+    //setCursor(Qt::BlankCursor);
     if (evt->buttons() & Qt::LeftButton && evt->pos() != rect().center())
     {
         virtualPos += (evt->pos() - rect().center());
@@ -135,7 +135,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* evt){
         virtualPos.setX(qBound(-width(), virtualPos.x(), width()));
         virtualPos.setY(-qBound(-height(), virtualPos.y(), height()));
         QCursor::setPos(mapToGlobal(rect().center()));
-        std::cout << "VirtualPos: " << virtualPos.x() << "," << virtualPos.y() << "\n";
+        //std::cout << "VirtualPos: " << virtualPos.x() << "," << virtualPos.y() << "\n";
         camera->cameraShake(virtualPos.x(),virtualPos.y());
         update();
         // sceneManager->callMouseMoveEventHandler(virtual_pos);
