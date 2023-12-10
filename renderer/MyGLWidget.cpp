@@ -55,6 +55,12 @@ void MyGLWidget::resizeGL(int w, int h){
 
 }
 
+void MyGLWidget::updateRender(){
+    makeCurrent();
+    update();
+    doneCurrent();
+}
+
 Camera * MyGLWidget::getCamera(){
     return camera;
 }

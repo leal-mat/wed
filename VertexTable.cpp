@@ -67,29 +67,14 @@ void VertexTable::popupContextMenuVertex(QPoint pos)
   std::cout << "CONTEUDO: " << currentVal << "\n";
 
 
-  QAction *pAddAction = new QAction("Add",this);
-  connect(pAddAction, &QAction::triggered, this, [this]() -> void
+  QAction *EVAction = new QAction("EV",this);
+  connect(EVAction, &QAction::triggered, this, [this]() -> void
                         {
-                          std::cout << "Adding something at vertexTable\n";
-                        });
-
-  QAction *pRemoveAction = new QAction("Remove", this);
-  connect(pRemoveAction, &QAction::triggered, this, [this]() -> void
-                        {
-                          std::cout << "Removing something at vertexTable\n";
-                        });
-
-  QAction *pUpdateAction = new QAction("Update", this);
-  connect(pUpdateAction, &QAction::triggered, this, [this]() -> void
-                        {
-                          std::cout << "Updating something at vertexTable\n";
+                          std::cout << "Calling EV - Vertex Table\n";
                         });
 
   QMenu *menu = new QMenu(this);
-  menu->addAction(pAddAction);
-  menu->addAction(pRemoveAction);
-  menu->addAction(pUpdateAction);
-  // menu->popup(wedTable->treeWidget->header()->mapToGlobal(pos));
+  menu->addAction(EVAction);
   menu->popup(vertexTable->mapToGlobal(pos));
   return;
 }

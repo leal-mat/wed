@@ -4,11 +4,14 @@ TableDialog::TableDialog(QWidget * parent) : QWidget(parent){
   layout = new QHBoxLayout(this);
   //layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
 
-  wedTable = new WedTable();
+  wedTable = new WedTable(new MenuCreator());
   vertexTable = new VertexTable();
   faceTable = new FaceTable();
   layout->setContentsMargins(0,0,0,0);
   layout->setSpacing(0);
+
+
+  connect(wedTable, &WedTable::wedSignal, this, &TableDialog::passingWedSignal);
 
   // WedTable->horizontalHeader()->setStretchLastSection(true);
   // WedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";

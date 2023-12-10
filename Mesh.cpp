@@ -331,6 +331,33 @@ std::vector<Vertex*> & Mesh::getVertexesVector() {
     return vertexes_vector;
 }
 
+Wed* Mesh::consultEdgeCreationMap(pair<int, int> _edge){
+    auto it_edge = edge_creation_map.find(_edge);
+    return (*it_edge).second;
+}
+
+
+Vertex* Mesh::consultVertexesVector(int index){
+    for (auto val: vertexes_vector)
+    {
+        if(val->index == index){
+            return val;
+        }
+    }
+    return nullptr;
+}
+
+
+Face* Mesh::consultFaceVector(pair<int, int> _edge){
+    for (auto val: face_vector)
+    {
+        if(val->edge->edge == _edge){
+            return val;
+        }
+    }
+    return nullptr;
+}
+
 // dado vértice, encontrar arestas adjacentes
 void Mesh::EV(Vertex* v) {
     Wed* e0 = v->edge;
@@ -393,11 +420,14 @@ void Mesh::markFace(Face* face){
 
 void Mesh::markEdge(Wed* edge){
     edge->visit = true;
+    edge->start->color = glm::vec3(0., 1., 0.);
+    edge->end->color = glm::vec3(0., 1., 0.);
     std::cout << "Visitei a aresta: " << "<" << edge->edge.first << ", "<< edge->edge.second << ">\n";
 }
 
 void Mesh::markVertex(Vertex* vertex){
     vertex->visit = true;
+    vertex->color= glm::vec3(0., 1., 0.);
     std::cout << "Visitei o vértice: " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
 }
 

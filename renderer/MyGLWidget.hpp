@@ -53,8 +53,7 @@ signals:
   
 
 public slots:
-
-  
+  void updateRender();
 
 //private:
 

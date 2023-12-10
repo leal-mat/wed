@@ -14,6 +14,7 @@
 #include "WedTable.hpp"
 #include "VertexTable.hpp"
 #include "FaceTable.hpp"
+#include "MenuCreator.hpp"
 
 #define COLUMN_WIDTH 100
 #define NUM_COLS_WED 9
@@ -24,19 +25,22 @@
 class TableDialog : public QWidget {
   Q_OBJECT
   public:
-  TableDialog(QWidget * parent = nullptr);
-  ~TableDialog();
-  void makeTable(std::vector<Wed*> * weds, std::vector<Face*> * faces, std::vector<Vertex*> * vertexes);
-  // void makeTable();
-  // void makeTable();
-  // void setTables(QTableWidget * wedTable, QTableWidget * FaceTable, QTableWidget * VertexTable);
-  void showTables();
+    TableDialog(QWidget * parent = nullptr);
+    ~TableDialog();
+    void makeTable(std::vector<Wed*> * weds, std::vector<Face*> * faces, std::vector<Vertex*> * vertexes);
+    // void makeTable();
+    // void makeTable();
+    // void setTables(QTableWidget * wedTable, QTableWidget * FaceTable, QTableWidget * VertexTable);
+    void showTables();
 
   public:
-  QHBoxLayout * layout;
-  WedTable * wedTable;
-  VertexTable * vertexTable;
-  FaceTable * faceTable;
+    QHBoxLayout * layout;
+    WedTable * wedTable;
+    VertexTable * vertexTable;
+    FaceTable * faceTable;
+  
+  signals:
+    void passingWedSignal(std::string currentVal, int currentCol, int currentRow, int actionId);
 };
 
 #endif //TABLE_DIALOG

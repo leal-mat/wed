@@ -34,6 +34,9 @@ public:
   std::vector<Wed *> & getWedVector();
   std::vector<Face *> & getFaceVector();
   std::vector<Vertex*> & getVertexesVector();
+  Wed* consultEdgeCreationMap(pair<int, int> _edge);
+  Vertex* consultVertexesVector(int index);
+  Face* consultFaceVector(pair<int, int> _edge);
   void updateMesh();
   Wed* getBaseWed();
   void markFace(Face* face);

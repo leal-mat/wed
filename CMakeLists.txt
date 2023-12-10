@@ -26,6 +26,7 @@ qt_add_executable(
     WedTable.cpp
     VertexTable.cpp
     FaceTable.cpp
+    MenuCreator.cpp
     renderer/Camera.cpp
     renderer/GLProgram.cpp
     renderer/GLObject.hpp

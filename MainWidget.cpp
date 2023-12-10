@@ -36,6 +36,8 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     layout->addWidget(tableDialog);
     setLayout(layout);
     connect(chooseFile, &QComboBox::activated,this,&MainWidget::fileChosen);
+    connect(tableDialog, &TableDialog::passingWedSignal, this, &MainWidget::getWedContent);
+    connect(this, &MainWidget::adjOperatorDone, mygl, &MyGLWidget::updateRender);
     show();
 }
 
@@ -53,5 +55,141 @@ void MainWidget::fileChosen(int idx){
     auto v = currentMesh->getVertexesVector();
     tableDialog->makeTable(&w, &f, &v);
     tableDialog->showTables();
+}
+
+
+void getTableValues(std::string tempVal, std::vector<int> *vec)
+{
+
+    std::stringstream ss(tempVal);
+    std::string result = "";
+    int pos = 0;
+    while (std::getline(ss, result, ','))
+    {
+        vec->at(pos) = std::stoi(result, 0);
+        pos++;
+    }
+
+}
+
+void MainWidget::getWedContent(std::string currentVal, int currentCol, int currentRow, int actionId){
+    std::cout << "VALOR ATUAL: "<< currentVal<<"\n";
+    std::cout << "COLUNA ATUAL: "<< currentCol<<"\n";
+    std::cout << "LINHA ATUAL: "<< currentRow<<"\n";
+
+
+    switch(actionId) {
+        case 0:
+            std::cout<<"EV\n";
+            if (currentCol == 7 || currentCol == 8){
+                std::string tempVal = currentVal;
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '<'), tempVal.end());
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '>'), tempVal.end());
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), ' '), tempVal.end());
+                std::cout <<"Valor: " << tempVal << "\n";
+                std::vector<int> vec;
+                vec.reserve(3);
+                vec.resize(3);
+                getTableValues(tempVal, &vec);
+                std::cout <<"Primeiro valor: " << vec.at(0) << "\n";
+                std::cout <<"Segundo valor: " << vec.at(1) << "\n";
+                std::cout <<"Terceiro valor: " << vec.at(2) << "\n";
+                auto vertexVal = currentMesh->consultVertexesVector(vec.at(2));
+                if(vertexVal != nullptr){
+                    currentMesh->EV(vertexVal);
+                }
+            }
+            break;
+        case 1:
+            std::cout<<"EE\n";
+            if (currentCol>=0 && currentCol<=4)
+            {
+                std::cout << "VAMOS OPERAR NO SEGUINTE VALOR: " << currentVal << "\n";
+                std::string tempVal = currentVal;
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '<'), tempVal.end());
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '>'), tempVal.end());
+                std::cout <<"Valor: " << tempVal << "\n";
+                std::vector<int> vec;
+                vec.reserve(2);
+                vec.resize(2);
+                getTableValues(tempVal, &vec);
+                std::cout <<"Primeiro valor: " << vec.at(0) << "\n";
+                std::cout <<"Segundo valor: " << vec.at(1) << "\n";
+
+                pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+                currentMesh->EE(currentMesh->consultEdgeCreationMap(pairToSearch));
+                emit adjOperatorDone();
+            }
+            
+            break;
+        case 2:
+            std::cout<<"FE\n";
+            if (currentCol>=0 && currentCol<=4)
+            {
+                std::cout << "VAMOS OPERAR NO SEGUINTE VALOR: " << currentVal << "\n";
+                std::string tempVal = currentVal;
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '<'), tempVal.end());
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '>'), tempVal.end());
+                std::cout <<"Valor: " << tempVal << "\n";
+                std::vector<int> vec;
+                vec.reserve(2);
+                vec.resize(2);
+                getTableValues(tempVal, &vec);
+                std::cout <<"Primeiro valor: " << vec.at(0) << "\n";
+                std::cout <<"Segundo valor: " << vec.at(1) << "\n";
+
+                pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+                currentMesh->FE(currentMesh->consultEdgeCreationMap(pairToSearch));
+                emit adjOperatorDone();
+            }
+            break;
+        case 3:
+            std::cout<<"VE\n";
+            if (currentCol>=0 && currentCol<=4)
+            {
+                std::cout << "VAMOS OPERAR NO SEGUINTE VALOR: " << currentVal << "\n";
+                std::string tempVal = currentVal;
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '<'), tempVal.end());
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '>'), tempVal.end());
+                std::cout <<"Valor: " << tempVal << "\n";
+                std::vector<int> vec;
+                vec.reserve(2);
+                vec.resize(2);
+                getTableValues(tempVal, &vec);
+                std::cout <<"Primeiro valor: " << vec.at(0) << "\n";
+                std::cout <<"Segundo valor: " << vec.at(1) << "\n";
+
+                pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+                currentMesh->FE(currentMesh->consultEdgeCreationMap(pairToSearch));
+                emit adjOperatorDone();
+            }
+            break;
+        case 4:
+            std::cout<<"EF\n";
+            if (currentCol==5 && currentCol==6)
+            {
+                std::cout << "VAMOS OPERAR NO SEGUINTE VALOR: " << currentVal << "\n";
+                std::string tempVal = currentVal;
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '<'), tempVal.end());
+                tempVal.erase(remove(tempVal.begin(), tempVal.end(), '>'), tempVal.end());
+                std::cout <<"Valor: " << tempVal << "\n";
+                std::vector<int> vec;
+                vec.reserve(2);
+                vec.resize(2);
+                getTableValues(tempVal, &vec);
+                std::cout <<"Primeiro valor: " << vec.at(0) << "\n";
+                std::cout <<"Segundo valor: " << vec.at(1) << "\n";
+
+                pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+                auto faceVal = currentMesh->consultFaceVector(pairToSearch);
+                if(faceVal != nullptr){
+                    currentMesh->EF(faceVal);
+                    emit adjOperatorDone();
+                }
+            }
+            break;
+    }
+
+    return;
 }
 

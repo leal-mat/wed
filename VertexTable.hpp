@@ -36,6 +36,9 @@ private:
 
 public slots:
   void popupContextMenuVertex(QPoint pos);
+
+signals:
+  void vertexSignal(std::string currentVal, int currentCol, int currentRow, int actionId);
 };
 
 

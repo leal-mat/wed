@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include "Wed.hpp"
+#include "MenuCreator.hpp"
 
 
 #define COLUMN_WIDTH 100
@@ -23,7 +24,7 @@ class WedTable : public QWidget
 {
   Q_OBJECT
 public:
-  WedTable();
+  WedTable(MenuCreator *);
   ~WedTable();
   void makeWedTable(std::vector<Wed*> * weds);
   QTableWidget * getWedTable();
@@ -32,10 +33,16 @@ private:
   QTableWidget * wedTable;
   QStringList wedLabels;
   std::string currentVal;
+  int currentCol;
+  int currentRow;
+  MenuCreator *menuCreator;
 
 public slots:
   void popupContextMenuWed(QPoint pos);
 
+signals:
+  void wedSignal(std::string currentVal, int currentCol, int currentRow, int actionId);
+  
 };
 
 

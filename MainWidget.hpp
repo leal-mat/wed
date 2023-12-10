@@ -17,8 +17,13 @@ class MainWidget : public QWidget
 public:
     MainWidget(QWidget *parent = 0);
     ~MainWidget();
+
+signals:
+    void adjOperatorDone();
+
 public slots:
     void fileChosen(int idx);
+    void getWedContent(std::string currentVal, int currentCol, int currentRow, int actionId);
 
 private:
     TableDialog * tableDialog;
@@ -26,6 +31,7 @@ private:
     QVBoxLayout *layout;
     QComboBox * chooseFile;
     Mesh * currentMesh;
+    
 };
 
 #endif // MAIN_WIDGET_H
