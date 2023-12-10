@@ -37,6 +37,8 @@ MainWidget::MainWidget(QWidget *parent) : QWidget(parent)
     setLayout(layout);
     connect(chooseFile, &QComboBox::activated,this,&MainWidget::fileChosen);
     connect(tableDialog, &TableDialog::passingWedSignal, this, &MainWidget::getWedContent);
+    connect(tableDialog, &TableDialog::passingVertexSignal, this, &MainWidget::getVertexContent);
+    connect(tableDialog, &TableDialog::passingFaceSignal, this, &MainWidget::getFaceContent);
     connect(this, &MainWidget::adjOperatorDone, mygl, &MyGLWidget::updateRender);
     show();
 }
@@ -164,7 +166,7 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
 
                 pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
                 //currentMesh->clearMarkedEdges();
-                currentMesh->FE(currentMesh->consultEdgeCreationMap(pairToSearch));
+                currentMesh->VE(currentMesh->consultEdgeCreationMap(pairToSearch));
                 emit adjOperatorDone();
             }
             break;
@@ -197,4 +199,56 @@ void MainWidget::getWedContent(std::string currentVal, int currentCol, int curre
 
     return;
 }
+
+
+
+void MainWidget::getVertexContent(std::string currentVal)
+{
+    currentMesh->clearMarkedEdges();
+    currentMesh->updateMesh();
+    std::string tempVal = currentVal;
+    tempVal.erase(remove(tempVal.begin(), tempVal.end(), '<'), tempVal.end());
+    tempVal.erase(remove(tempVal.begin(), tempVal.end(), '>'), tempVal.end());
+    std::cout <<"Valor: " << tempVal << "\n";
+    std::vector<int> vec;
+    vec.reserve(2);
+    vec.resize(2);
+    getTableValues(tempVal, &vec);
+    std::cout <<"Primeiro valor: " << vec.at(0) << "\n";
+    std::cout <<"Segundo valor: " << vec.at(1) << "\n";
+    pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+    auto vertexVal = currentMesh->consultVertexesVector(pairToSearch);
+    if(vertexVal != nullptr){
+        currentMesh->EV(vertexVal);
+        emit adjOperatorDone();
+    }
+    return;
+}
+
+
+void MainWidget::getFaceContent(std::string currentVal)
+{
+    currentMesh->clearMarkedEdges();
+    currentMesh->updateMesh();
+    std::cout << "VAMOS OPERAR NO SEGUINTE VALOR: " << currentVal << "\n";
+    std::string tempVal = currentVal;
+    tempVal.erase(remove(tempVal.begin(), tempVal.end(), '<'), tempVal.end());
+    tempVal.erase(remove(tempVal.begin(), tempVal.end(), '>'), tempVal.end());
+    std::cout <<"Valor: " << tempVal << "\n";
+    std::vector<int> vec;
+    vec.reserve(2);
+    vec.resize(2);
+    getTableValues(tempVal, &vec);
+    std::cout <<"Primeiro valor: " << vec.at(0) << "\n";
+    std::cout <<"Segundo valor: " << vec.at(1) << "\n";
+
+    pair<int, int> pairToSearch = pair(vec.at(0), vec.at(1));
+    auto faceVal = currentMesh->consultFaceVector(pairToSearch);
+    if(faceVal != nullptr){
+        currentMesh->EF(faceVal);
+        emit adjOperatorDone();
+    }
+    return;
+}
+
 

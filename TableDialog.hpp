@@ -41,6 +41,8 @@ class TableDialog : public QWidget {
   
   signals:
     void passingWedSignal(std::string currentVal, int currentCol, int currentRow, int actionId);
+    void passingVertexSignal(std::string currentVal);
+    void passingFaceSignal(std::string currentVal);
 };
 
 #endif //TABLE_DIALOG

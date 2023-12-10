@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include "Wed.hpp"
+#include "MenuCreator.hpp"
 
 
 #define COLUMN_WIDTH 100
@@ -21,8 +22,9 @@
 
 class FaceTable : public QWidget
 {
+    Q_OBJECT
 public:
-    FaceTable();
+    FaceTable(MenuCreator *);
     ~FaceTable();
     void makeFaceTable(std::vector<Face*> * faces);
     QTableWidget * getFaceTable();
@@ -31,9 +33,13 @@ private:
     QStringList faceLabels;
     int currentIndex;
     std::string currentVal;
+    MenuCreator *menuCreator;
 
 public slots:
     void popupContextMenuFace(QPoint pos);
+
+signals:
+  void faceSignal(std::string currentVal);
 };
 
 

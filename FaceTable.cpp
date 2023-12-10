@@ -3,13 +3,24 @@
 #include <QAction>
 #include <QPoint>
 
-FaceTable::FaceTable()
+FaceTable::FaceTable(MenuCreator * menuc = nullptr)
 {
   faceTable = new QTableWidget();
   faceTable->setContextMenuPolicy(Qt::CustomContextMenu);
   faceTable->horizontalHeader()->setStretchLastSection(true);
   faceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
   faceLabels << "Faces";
+  menuCreator = menuc;
+
+
+
+  QAction *EFAction = menuCreator->getEFAction();
+  connect(EFAction, &QAction::triggered, this, [this]() -> void
+                {
+                    std::cout << "Calling EF\n";
+                    emit faceSignal(currentVal);
+                });
+
 
   connect(faceTable, &QTableWidget::customContextMenuRequested, this, &FaceTable::popupContextMenuFace);
 }
@@ -67,31 +78,8 @@ QTableWidget * FaceTable::getFaceTable() {
 void FaceTable::popupContextMenuFace(QPoint pos)
 {
 
-  std::cout << "CONTEUDO: " << currentVal << "\n";
-
-
-  QAction *pAddAction = new QAction("Add",this);
-  connect(pAddAction, &QAction::triggered, this, [this]() -> void
-                        {
-                          std::cout << "Adding something\n";
-                        });
-
-  QAction *pRemoveAction = new QAction("Remove", this);
-  connect(pRemoveAction, &QAction::triggered, this, [this]() -> void
-                        {
-                          std::cout << "Removing something\n";
-                        });
-
-  QAction *pUpdateAction = new QAction("Update", this);
-  connect(pUpdateAction, &QAction::triggered, this, [this]() -> void
-                        {
-                          std::cout << "Updating something\n";
-                        });
-
-  QMenu *menu = new QMenu(this);
-  menu->addAction(pAddAction);
-  menu->addAction(pRemoveAction);
-  menu->addAction(pUpdateAction);
+  std::cout << "CONTEUDO Face Menu: " << currentVal << "\n";
+  QMenu *menu = menuCreator->getFaceMenu();
   menu->popup(faceTable->mapToGlobal(pos));
   return;
 }

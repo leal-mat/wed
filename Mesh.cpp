@@ -1,5 +1,28 @@
 #include "Mesh.hpp"
 #include "renderer/MyGLWidget.hpp"
+
+bool contains(std::vector<Face*> *support_a, Face* face){
+  if(std::find(support_a->begin(), support_a->end(), face) != support_a->end()) {
+    return true;
+  }
+  return false;
+}
+
+
+void __findDuplicateFaces(std::vector<Face*> a){
+  std::vector<Face*> support_a;
+  support_a.clear();
+  for (Face* face : a){
+    if(!contains(&support_a, face)){
+      std::cout <<"unico!: <" << face->edge->edge.first << ", " << face->edge->edge.second<<">\n";
+      support_a.push_back(face);
+    }
+    else{
+      std::cout <<"duplicado: <" << face->edge->edge.first << ", " << face->edge->edge.second<<">\n";
+    }
+  }
+}
+
 void getValues(const char &t, std::vector<float> *vec, std::string str)
 {
 
@@ -451,8 +474,8 @@ void Mesh::buildMesh() {
     base_wed->status = STATUS::CREATED;
     pair<int, int> firstEdge = (*edge_face_map.begin()).first;
     edge_creation_map.insert({firstEdge, base_wed});
+    std::cout << "base wed: " << "<" << base_wed->edge.first <<", " << base_wed->edge.second <<">\n";
     base_wed->rightNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
-    // std::cout<<"saiu do rightnext\n";
     base_wed->leftNext(&edge_face_map, &edge_creation_map, &face_map, &vertex_vector);
     return;
 }
@@ -462,8 +485,8 @@ void Mesh::createWedVector(){
     for (auto elem : edge_creation_map) {
         
         wed_vector.push_back(elem.second);
-        // 337, 352
-        if(elem.second->edge.first == 337 && elem.second->edge.second == 352) {
+        // 352, 307
+        if(elem.second->edge.first == 352 && elem.second->edge.second == 307) {
             std::cout << "A POSICAO DO BASE WED EH ESSA: " << cont+1 << "\n";
         }
         cont++;
@@ -480,6 +503,8 @@ void Mesh::createFaceVector(){
     for (auto elem : face_map) {
         face_vector.push_back(elem.second);
     }
+    //debug das faces
+    __findDuplicateFaces(face_vector);
 }
 
 std::vector<Wed *> & Mesh::getWedVector() {
@@ -508,6 +533,17 @@ Vertex* Mesh::consultVertexesVector(int index){
         }
     }
     return nullptr;
+}
+
+
+Vertex* Mesh::consultVertexesVector(pair<int, int> _edge){
+  for (auto val: vertexes_vector)
+  {
+    if(val->edge->edge == _edge){
+      return val;
+    }
+  }
+  return nullptr;
 }
 
 
@@ -577,23 +613,25 @@ void Mesh::EF(Face* face){
 }
 
 void Mesh::markFace(Face* face){
-    face->visit = true;
-    std::cout<<"Visitei face da aresta: " << "<" << face->edge->edge.first << ", "<< face->edge->edge.second<<">\n";
+  face->visit = true;
+  std::cout<<"Visitei face da aresta: " << "<" << face->edge->edge.first << ", "<< face->edge->edge.second<<">\n";
+  // marked_idx_vector.push_back((uint)face->edge->edge.first);
+  // marked_idx_vector.push_back((uint)face->edge->edge.second);
+  EF(face);
 }
 
 void Mesh::markEdge(Wed* edge){
-    edge->visit = true;
-    // edge->start->color = glm::vec3(0., 1., 0.);
-    // edge->end->color = glm::vec3(0., 1., 0.);
-    std::cout << "Visitei a aresta: " << "<" << edge->edge.first << ", "<< edge->edge.second << ">\n";
-    marked_idx_vector.push_back((uint)edge->edge.first);
-    marked_idx_vector.push_back((uint)edge->edge.second);
+  edge->visit = true;
+  std::cout << "Visitei a aresta: " << "<" << edge->edge.first << ", "<< edge->edge.second << ">\n";
+  marked_idx_vector.push_back((uint)edge->edge.first);
+  marked_idx_vector.push_back((uint)edge->edge.second);
 }
 
 void Mesh::markVertex(Vertex* vertex){
-    vertex->visit = true;
-    vertex->color= glm::vec3(0., 1., 0.);
-    std::cout << "Visitei o vértice: " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
+  vertex->visit = true;
+  std::cout << "Visitei o vértice: " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
+  marked_idx_vector.push_back((uint)vertex->edge->edge.first);
+  marked_idx_vector.push_back((uint)vertex->edge->edge.second);
 }
 
 void Mesh::clearMarkedEdges(){

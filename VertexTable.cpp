@@ -4,13 +4,22 @@
 #include <QPoint>
 
 
-VertexTable::VertexTable()
+VertexTable::VertexTable(MenuCreator * menuc = nullptr)
 {
   vertexTable = new QTableWidget();
   vertexTable->horizontalHeader()->setStretchLastSection(true);
   vertexTable->setContextMenuPolicy(Qt::CustomContextMenu);
   vertexTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
   vertexLabels << "Vertex";
+  menuCreator = menuc;
+
+
+  QAction *EVAction = menuCreator->getEVAction();
+  connect(EVAction, &QAction::triggered, this, [this]() -> void
+              {
+                  std::cout << "Calling EV\n";
+                  emit vertexSignal(currentVal);
+              });
 
   connect(vertexTable, &QTableWidget::customContextMenuRequested, this, &VertexTable::popupContextMenuVertex);
 }
@@ -64,17 +73,9 @@ QTableWidget * VertexTable::getVertexTable(){
 void VertexTable::popupContextMenuVertex(QPoint pos)
 {
 
-  std::cout << "CONTEUDO: " << currentVal << "\n";
+  std::cout << "Vertex Menu CONTEUDO: " << currentVal << "\n";
 
-
-  QAction *EVAction = new QAction("EV",this);
-  connect(EVAction, &QAction::triggered, this, [this]() -> void
-                        {
-                          std::cout << "Calling EV - Vertex Table\n";
-                        });
-
-  QMenu *menu = new QMenu(this);
-  menu->addAction(EVAction);
+  QMenu *menu = menuCreator->getVertexMenu();
   menu->popup(vertexTable->mapToGlobal(pos));
   return;
 }

@@ -5,13 +5,15 @@ TableDialog::TableDialog(QWidget * parent) : QWidget(parent){
   //layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
 
   wedTable = new WedTable(new MenuCreator());
-  vertexTable = new VertexTable();
-  faceTable = new FaceTable();
+  vertexTable = new VertexTable(new MenuCreator());
+  faceTable = new FaceTable(new MenuCreator());
   layout->setContentsMargins(0,0,0,0);
   layout->setSpacing(0);
 
 
   connect(wedTable, &WedTable::wedSignal, this, &TableDialog::passingWedSignal);
+  connect(vertexTable, &VertexTable::vertexSignal, this, &TableDialog::passingVertexSignal);
+  connect(faceTable, &FaceTable::faceSignal, this, &TableDialog::passingFaceSignal);
 
   // WedTable->horizontalHeader()->setStretchLastSection(true);
   // WedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";

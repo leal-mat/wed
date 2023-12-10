@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include "Wed.hpp"
+#include "MenuCreator.hpp"
 
 
 #define COLUMN_WIDTH 100
@@ -23,7 +24,7 @@ class VertexTable : public QWidget
 {
   Q_OBJECT
 public:
-  VertexTable();
+  VertexTable(MenuCreator *);
   ~VertexTable();
   void makeVertexTable(std::vector<Vertex*> * vertexes);
   QTableWidget * getVertexTable();
@@ -32,13 +33,14 @@ private:
   QStringList vertexLabels;
   int currentIndex;
   std::string currentVal;
+  MenuCreator *menuCreator;
 
 
 public slots:
   void popupContextMenuVertex(QPoint pos);
 
 signals:
-  void vertexSignal(std::string currentVal, int currentCol, int currentRow, int actionId);
+  void vertexSignal(std::string currentVal);
 };
 
 

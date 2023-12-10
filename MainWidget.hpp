@@ -24,6 +24,8 @@ signals:
 public slots:
     void fileChosen(int idx);
     void getWedContent(std::string currentVal, int currentCol, int currentRow, int actionId);
+    void getVertexContent(std::string currentVal);
+    void getFaceContent(std::string currentVal);
 
 private:
     TableDialog * tableDialog;

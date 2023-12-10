@@ -48,11 +48,6 @@ void Wed::rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher>
     }
 
 
-
-    // Checando se face_left é diferente de (0,0,0) para que possamos obter o par_left
-   //  std::cout << "Face Left: " << face_left.x << ", " << face_left.y << ", " << face_left.z << "\n";
-
-
     pair<int, int> next_pair(-10,-10);
     // se tiver invertido, troca-se as faces
     if(edge.first == par_right.second && edge.second == par_right.first) {
@@ -79,53 +74,9 @@ void Wed::rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher>
     }
 
     auto face_pair = checkFaceMap(face_right, face_left, face_map);
-    // std::cout << "debug 2\n";
     right = face_pair.first;
     left = face_pair.second;
     end = checkVertexVector(edge.second, vertex_vector);
-    // std::cout << "debug 3\n";
-
-
-
-
-
-    //antiga verificação:
-    // esses ifs não sei se estão corretos ou se bastam
-    //if(edge.first == par_right.first && edge.second == par_right.second) {
-    //    // sei lá
-    //    if(par_right.first == face_right.x){
-    //        next_pair.first=face_right.y;
-    //        next_pair.second=face_right.z;
-    //    }
-    //    else if(par_right.first == face_right.y){
-    //        next_pair.first=face_right.z;
-    //        next_pair.second=face_right.x;
-    //    }
-    //    else if(par_right.first == face_right.z){
-    //        next_pair.first=face_right.x;
-    //        next_pair.second=face_right.y;
-    //    }
-    //}
-    //else if(face_left != glm::vec3(0.) && edge.first == par_left.first && edge.second == par_left.second) {
-    //    // sei lá
-    //    if(par_left.first == face_left.x){
-    //        next_pair.first=face_left.y;
-    //        next_pair.second=face_left.z;
-    //    }
-    //    else if(par_left.first == face_left.y){
-    //        next_pair.first=face_left.z;
-    //        next_pair.second=face_left.x;
-    //    }
-    //    else if(par_left.first == face_left.z){
-    //        next_pair.first=face_left.x;
-    //        next_pair.second=face_left.y;
-    //    }
-    //}
-
-
-    // std::cout<< "ParRight: " << par_right.first << ", " << par_right.second << "\n";
-    // std::cout<< "ParLeft: " << par_left.first << ", " << par_left.second << "\n";
-    // std::cout<< "Next: " << next_pair.first << ", " << next_pair.second << "\n";
 
     // Segundo Passo:
     // Achado a aresta rn, alteramos seus parâmetros corretamente
@@ -154,10 +105,6 @@ void Wed::leftNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> 
     }
     auto it = edge_face_map->find(edge);
 
-    // Verificar se já foi encontrado um right next previamente.
-    // if (right_next != nullptr){
-    //     // coisas
-    // }
     glm::vec3 face_right = (*it).second;
     pair<int,int> par_right = (*it).first;
 
@@ -198,39 +145,6 @@ void Wed::leftNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher> 
     right = face_pair.second;
     left = face_pair.first;
     end = checkVertexVector(edge.second, vertex_vector);
-    // antiga verificação:
-    // // esses ifs não sei se estão corretos ou se bastam
-    // if(edge.first == par_right.second && edge.second == par_right.first) {
-    //     // sei lá
-    //     if(par_right.first == face_right.x){
-    //         next_pair.first=face_right.y;
-    //         next_pair.second=face_right.z;
-    //     }
-    //     else if(par_right.first == face_right.y){
-    //         next_pair.first=face_right.z;
-    //         next_pair.second=face_right.x;
-    //     }
-    //     else if(par_right.first == face_right.z){
-    //         next_pair.first=face_right.x;
-    //         next_pair.second=face_right.y;
-    //     }
-    // }
-    // else if(face_left != glm::vec3(0.) && edge.first == par_left.second && edge.second == par_left.first) {
-    //     // sei lá
-    //     if(par_left.first == face_left.x){
-    //         next_pair.first=face_left.y;
-    //         next_pair.second=face_left.z;
-    //     }
-    //     else if(par_left.first == face_left.y){
-    //         next_pair.first=face_left.z;
-    //         next_pair.second=face_left.x;
-    //     }
-    //     else if(par_left.first == face_left.z){
-    //         next_pair.first=face_left.x;
-    //         next_pair.second=face_left.y;
-    //     }
-    // }
-
      
     // Segundo Passo:
     // Achado a aresta ln, alteramos seus parâmetros corretamente
