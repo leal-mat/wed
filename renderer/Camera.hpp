@@ -8,7 +8,8 @@
 #include <QObject>
 
 static float speed = .1f;
-static float sens = .1f;
+static float xsens = .001f;
+static float ysens = .09f;
 
 class Camera : public QObject{
 Q_OBJECT
@@ -32,9 +33,12 @@ public:
     void walkFront();
     void walkBack();
 
+    void cameraShake(float x, float y);
+
 
 private:
-    void updateCamera();
+    void updateView();
+    void updateProj();
 
 private:       
 
@@ -43,7 +47,9 @@ private:
 
     glm::vec3 at;
     glm::vec3 pos;
+    glm::vec3 right;
     glm::vec3 up;
+    glm::vec3 worldUp;
     float yaw;
     float pitch;
 

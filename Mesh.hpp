@@ -23,7 +23,6 @@
 
 class MyGLWidget;
 
-
 class Mesh : public GLObject{
 public:
   Mesh(QOpenGLContext * context = nullptr);

@@ -4,8 +4,10 @@
 Camera::Camera(glm::vec3 _pos, glm::vec3 _at){
     pos = _pos;
     at = _at;
-    up = glm::vec3(0.,1.,0.);
-    yaw = 0.;
+    worldUp = glm::vec3(0.,1.,0.);
+    up = worldUp;
+    right = glm::vec3(1.);
+    yaw = -90.;
     pitch = 0.;
 
     fov = 90.;
@@ -13,34 +15,35 @@ Camera::Camera(glm::vec3 _pos, glm::vec3 _at){
     far = 100.;
     w = 200;
     h = 200;
-    updateCamera();
+    updateProj();
+    updateView();
 }
 
 void Camera::setAt(glm::vec3 _at){
     at = _at;
-    updateCamera();
+    updateView();
 }
 
 void Camera::setPos(glm::vec3 _pos){
     pos = _pos;
-    updateCamera();
+    updateView();
 }
 
 void Camera::setFov(float _fov){
     fov = _fov;
-    updateCamera();
+    updateView();
 }
 
 void Camera::setViewPlanes(float _near, float _far){
     near = _near;
     far = _far;
-    updateCamera();
+    updateProj();
 }
 
 void Camera::setCanvasDimensions(float _w , float _h){
     w = _w;
     h = _h;
-    updateCamera();
+    updateProj();
 }
 
 glm::vec3 Camera::getPos() const{
@@ -60,29 +63,60 @@ glm::mat4 & Camera::getProjMatrix(){
 }
 
 void Camera::walkRight(){
-    pos.x += speed;
-    updateCamera();
+    //pos.x += speed;
+    pos += right*speed;
+    updateView();
 }
 
 void Camera::walkLeft(){
-    pos.x -= speed;
-    updateCamera();
+    pos -= right*speed;
+    updateView();
 }
 
 void Camera::walkFront(){
-    pos.z -= speed;
-    updateCamera();
+    pos += at*speed;
+    updateView();
 }
 
 void Camera::walkBack(){
-    pos.z += speed;
-    updateCamera();
+    pos -= at*speed;
+    updateView();
 }
 
+void Camera::cameraShake(float xoffset, float yoffset){
+    xoffset *= xsens;
+    yoffset *= (ysens);
+
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    // make sure that when pitch is out of bounds, screen doesn't get flipped
+
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    if (pitch < -89.0f)
+        pitch = -89.0f;
 
 
-void Camera::updateCamera(){
+    // update Front, Right and Up Vectors using the updated Euler angles
+    updateView();
+}
+
+void Camera::updateView(){
+
+    glm::vec3 frontTemp;
+    frontTemp.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    frontTemp.y = sin(glm::radians(pitch));
+    frontTemp.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    at = glm::normalize(frontTemp);
+    // also re-calculate the Right and Up vector
+    right = glm::normalize(glm::cross(at, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+    up = glm::normalize(glm::cross(right, at));
+
     viewMatrix = glm::lookAtRH(pos,pos+at,up);
-    projMatrix = glm::perspectiveFovRH(glm::radians(fov),w,h,near,far);
 
+}
+
+void Camera::updateProj(){
+    projMatrix = glm::perspectiveFovRH(glm::radians(fov),w,h,near,far);
 }

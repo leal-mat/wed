@@ -95,9 +95,10 @@ void MyGLWidget::keyPressEvent(QKeyEvent * keyEvent){
 
 void MyGLWidget::mousePressEvent(QMouseEvent* evt)
 {
-    virtualPos = evt->pos();
-    setCursor(Qt::BlankCursor);
+    //virtualPos = evt->pos();
+    //setCursor(Qt::BlankCursor);
     QCursor::setPos(mapToGlobal(rect().center()));
+    std::cout << "VirtualPos click: " << virtualPos.x() << "," << virtualPos.y() << "\n";
     update();
     // sceneManager->callMousePressEventHandler(virtual_pos);
     QWidget::mousePressEvent(evt);
@@ -107,24 +108,29 @@ void MyGLWidget::mousePressEvent(QMouseEvent* evt)
 
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* evt){
     std::cout<<"SOLTADO\n";
-    QCursor::setPos(mapToGlobal(virtualPos));
-    setCursor(Qt::ArrowCursor);
+    //QCursor::setPos(mapToGlobal(virtualPos));
+    QCursor::setPos(mapToGlobal(rect().center()));
+    virtualPos = QPoint(0,0);
+    //setCursor(Qt::ArrowCursor);
     // sceneManager->callMouseReleaseEventHandler(virtual_pos);
     QWidget::mouseReleaseEvent(evt);
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* evt){
-if (evt->buttons() & Qt::LeftButton && evt->pos() != rect().center())
+    setCursor(Qt::BlankCursor);
+    if (evt->buttons() & Qt::LeftButton && evt->pos() != rect().center())
     {
         virtualPos += (evt->pos() - rect().center());
 
         //uncomment if you want wrap behavior
-        //virtual_pos.setX((virtual_pos.x() + width()) % width());
-        //virtual_pos.setY((virtual_pos.y() + height()) % height());
+        //virtualPos.setX((virtualPos.x() + width()) % width());
+        //virtualPos.setY((virtualPos.y() + height()) % height());
 
-        virtualPos.setX(qBound(0, virtualPos.x(), width()));
-        virtualPos.setY(qBound(0, virtualPos.y(), height()));
+        virtualPos.setX(qBound(-width(), virtualPos.x(), width()));
+        virtualPos.setY(-qBound(-height(), virtualPos.y(), height()));
         QCursor::setPos(mapToGlobal(rect().center()));
+        std::cout << "VirtualPos: " << virtualPos.x() << "," << virtualPos.y() << "\n";
+        camera->cameraShake(virtualPos.x(),virtualPos.y());
         update();
         // sceneManager->callMouseMoveEventHandler(virtual_pos);
     }
