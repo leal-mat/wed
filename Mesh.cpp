@@ -1,26 +1,18 @@
 #include "Mesh.hpp"
 #include "renderer/MyGLWidget.hpp"
 
-bool contains(std::vector<Face*> *support_a, Face* face){
-  if(std::find(support_a->begin(), support_a->end(), face) != support_a->end()) {
-    return true;
-  }
-  return false;
-}
-
 
 void __findDuplicateFaces(std::vector<Face*> a){
-  std::vector<Face*> support_a;
-  support_a.clear();
-  for (Face* face : a){
-    if(!contains(&support_a, face)){
-      std::cout <<"unico!: <" << face->edge->edge.first << ", " << face->edge->edge.second<<">\n";
-      support_a.push_back(face);
-    }
-    else{
-      std::cout <<"duplicado: <" << face->edge->edge.first << ", " << face->edge->edge.second<<">\n";
+  int cont=0;
+  for (int i=0; i < a.size(); i++){
+    for (int j=0; j<a.size(); j++){
+      if (i!=j && a[i]->edge->edge.first == a[j]->edge->edge.first &&  a[i]->edge->edge.second == a[j]->edge->edge.second ){
+        std::cout<<"duplicado!: <" <<  a[i]->edge->edge.first << ", " << a[i]->edge->edge.second << ">\n";
+        cont++;
+      }
     }
   }
+  std::cout<<"numero de duplicados (ele conta 2 vezes o mesmo): "<<cont<<std::endl;
 }
 
 void getValues(const char &t, std::vector<float> *vec, std::string str)
