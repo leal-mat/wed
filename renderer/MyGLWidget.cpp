@@ -95,6 +95,9 @@ void MyGLWidget::keyPressEvent(QKeyEvent * keyEvent){
     else if (keyEvent->key() == Qt::Key_A){
        camera->walkLeft(); 
     }
+    else if (keyEvent->key() == Qt::Key_Space){
+       camera->resetView(); 
+    }
     update();
     doneCurrent();
 }

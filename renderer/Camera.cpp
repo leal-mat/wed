@@ -102,6 +102,16 @@ void Camera::cameraShake(float xoffset, float yoffset){
     updateView();
 }
 
+void Camera::resetView(){
+    pos = glm::vec3(0.,0.,4.);
+    at = glm::vec3(0.,0.,-1.);
+    yaw = -90.;
+    pitch = 0.;
+    right = glm::vec3(1.);
+    updateView();
+
+}
+
 void Camera::updateView(){
 
     glm::vec3 frontTemp;

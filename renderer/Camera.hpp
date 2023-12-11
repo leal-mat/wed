@@ -35,6 +35,8 @@ public:
 
     void cameraShake(float x, float y);
 
+    void resetView();
+
 
 private:
     void updateView();
