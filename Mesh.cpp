@@ -104,25 +104,6 @@ void Mesh::getMeshProperties(std::string fileName)
             }
         }
     }
-    // Para mostrar o que temos nos mapas, descomente essa secao; //
-
-    // unordered multimap:
-    //std::cout << "Indices\n";
-    //for (auto elem : edge_face_map) {
-    //  // std::cout << "(" << elem.first.first << ", " << elem.first.second << "); "<<
-    //  // "face: " << elem.second.x << " " << elem.second.y<< " " << elem.second.z << std::endl;
-    //}
-    //std::cout<<"Teste\n";
-    //pair<int,int> t1(4,2);
-    //auto v = edge_face_map.find(t1);
-    //std::cout<<"Quantidade de valores nessa key: " << edge_face_map.count(t1)<<std::endl;
-    //while(v != edge_face_map.end()) {
-    //    auto i = *v;
-    //    // std::cout<< "face: " << i.second.x << " " << i.second.y<< " " << i.second.z << std::endl;
-    //    v++;
-    //}
-
-    //exit(-1);
     return;
 }
 
@@ -245,7 +226,6 @@ void Mesh::init() {
   f->glBindVertexArray(0); //unbind current VAO
 
   //markedEdges
-  //f->glUseProgram(program[1].getProgramId());
   f->glBindVertexArray(VAO[2]);
   
   f->glBindBuffer(GL_ARRAY_BUFFER,VBO[2]);
@@ -651,8 +631,6 @@ void Mesh::markFace(Face* face){
   {
     face->visit = true;
     std::cout<<"Visitei face da aresta: " << "<" << face->edge->edge.first << ", "<< face->edge->edge.second<<">\n";
-    // marked_idx_vector_edge.push_back((uint)face->edge->edge.first);
-    // marked_idx_vector_edge.push_back((uint)face->edge->edge.second);
     EF(face);
   }
 }

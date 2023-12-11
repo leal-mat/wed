@@ -12,7 +12,6 @@ Vertex::Vertex(int _index)  : index(_index) {
 
 QString Vertex::debugVertex(){
     std::string s = std::to_string(index);
-    //return QString::fromStdString(s);
     if(edge != nullptr){
         return edge->debugWed() + QString(", ") + QString::fromStdString(std::to_string(index));
     }

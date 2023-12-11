@@ -26,11 +26,7 @@ void Wed::rightNext(std::unordered_multimap<pair<int,int>, glm::vec3, KeyHasher>
     // Primeiro passo:
     // Verificar se já foi encontrado um right next previamente
     // Descobrir a face qual é o próximo
-    // std::cout<< "Edge: " << edge.first << ", " << edge.second << "\n";
     auto it = edge_face_map->find(edge);
-    //std::cout<<"Edge debug: "<<edge.first<< ", " << edge.second << "\n"; 
-    //std::cout<<"Pegou o iterator\n";
-    //std::cout<<"Edge: "<<edge.first << " " <<edge.second<<std::endl;
     
     if((it)==edge_face_map->end()){
         std::cout<<"meu mano era end()\n";

@@ -2,7 +2,6 @@
 
 TableDialog::TableDialog(QWidget * parent) : QWidget(parent){
   layout = new QHBoxLayout(this);
-  //layout->setSizeConstraint(QLayout::SizeConstraint::SetFixedSize);
 
   wedTable = new WedTable(new MenuCreator());
   vertexTable = new VertexTable(new MenuCreator());
@@ -15,14 +14,6 @@ TableDialog::TableDialog(QWidget * parent) : QWidget(parent){
   connect(vertexTable, &VertexTable::vertexSignal, this, &TableDialog::passingVertexSignal);
   connect(faceTable, &FaceTable::faceSignal, this, &TableDialog::passingFaceSignal);
 
-  // WedTable->horizontalHeader()->setStretchLastSection(true);
-  // WedLabels << "edge" << "rn" << "rp" << "ln" << "lp" <<"fr" <<"fl" << "vs" <<"ve";
-
-  // VertexTable->horizontalHeader()->setStretchLastSection(true);
-  // VertexLabels << "Vertex";
-
-  // FaceTable->horizontalHeader()->setStretchLastSection(true);
-  // FaceLabels << "Faces";
 
   setFixedSize((NUM_COLS_WED+NUM_COLS_VERT+NUM_COLS_FACE+4)*COLUMN_WIDTH,400);
 
