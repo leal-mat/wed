@@ -7,9 +7,9 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <QObject>
 
-static float speed = .1f;
+static float speed = .2f;
 static float xsens = .001f;
-static float ysens = .09f;
+static float ysens = .001f;
 
 class Camera : public QObject{
 Q_OBJECT

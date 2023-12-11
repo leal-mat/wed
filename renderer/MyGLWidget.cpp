@@ -136,7 +136,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* evt){
         //virtualPos.setY((virtualPos.y() + height()) % height());
 
         virtualPos.setX(qBound(-width(), virtualPos.x(), width()));
-        virtualPos.setY(-qBound(-height(), virtualPos.y(), height()));
+        virtualPos.setY(qBound(-height(), virtualPos.y(), height()));
         QCursor::setPos(mapToGlobal(rect().center()));
         //std::cout << "VirtualPos: " << virtualPos.x() << "," << virtualPos.y() << "\n";
         camera->cameraShake(virtualPos.x(),virtualPos.y());

@@ -604,7 +604,7 @@ void Mesh::EV(Vertex* v) {
             edge = edge->left_next; 
         }
         markEdge(edge);
-    } while (edge != e0);
+    } while (edge != e0 && edge != nullptr);
     return;
 }
 
@@ -647,24 +647,33 @@ void Mesh::EF(Face* face){
 }
 
 void Mesh::markFace(Face* face){
-  face->visit = true;
-  std::cout<<"Visitei face da aresta: " << "<" << face->edge->edge.first << ", "<< face->edge->edge.second<<">\n";
-  // marked_idx_vector_edge.push_back((uint)face->edge->edge.first);
-  // marked_idx_vector_edge.push_back((uint)face->edge->edge.second);
-  EF(face);
+  if (face != nullptr)
+  {
+    face->visit = true;
+    std::cout<<"Visitei face da aresta: " << "<" << face->edge->edge.first << ", "<< face->edge->edge.second<<">\n";
+    // marked_idx_vector_edge.push_back((uint)face->edge->edge.first);
+    // marked_idx_vector_edge.push_back((uint)face->edge->edge.second);
+    EF(face);
+  }
 }
 
 void Mesh::markEdge(Wed* edge){
-  edge->visit = true;
-  std::cout << "Visitei a aresta: " << "<" << edge->edge.first << ", "<< edge->edge.second << ">\n";
-  marked_idx_vector_edge.push_back((uint)edge->edge.first);
-  marked_idx_vector_edge.push_back((uint)edge->edge.second);
+  if (edge != nullptr)
+  {
+    edge->visit = true;
+    std::cout << "Visitei a aresta: " << "<" << edge->edge.first << ", "<< edge->edge.second << ">\n";
+    marked_idx_vector_edge.push_back((uint)edge->edge.first);
+    marked_idx_vector_edge.push_back((uint)edge->edge.second);
+  }
 }
 
 void Mesh::markVertex(Vertex* vertex){
-  vertex->visit = true;
-  std::cout << "Visitei o vértice "<<vertex->index<<": " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
-  marked_idx_vector_point.push_back((uint)vertex->index);
+  if (vertex != nullptr)
+  {
+    vertex->visit = true;
+    std::cout << "Visitei o vértice "<<vertex->index<<": " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
+    marked_idx_vector_point.push_back((uint)vertex->index);
+  }
 }
 
 void Mesh::clearMarkedEdges(){
