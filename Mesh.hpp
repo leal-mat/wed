@@ -74,7 +74,9 @@ private:
   // Index Vector
   std::vector<uint> idxVector;
   std::vector<uint> edges_idx_vector;
-  std::vector<uint> marked_idx_vector;
+  std::vector<uint> marked_idx_vector_edge;
+  std::vector<uint> marked_idx_vector_point;
+
 
   MyGLWidget * glWidget;
 };

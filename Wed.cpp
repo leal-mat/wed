@@ -186,6 +186,8 @@ std::pair<Face*, Face*> Wed::checkFaceMap(glm::vec3 face_right, glm::vec3 face_l
                                             
     std::pair<Face *, Face *> return_face;
 
+    bool wasEmpty = face_map->empty();
+
     auto face_right_iterator = face_map->find(face_right);
     auto face_left_iterator = face_map->find(face_left);
     
@@ -197,17 +199,20 @@ std::pair<Face*, Face*> Wed::checkFaceMap(glm::vec3 face_right, glm::vec3 face_l
         face_map->insert({face_right, return_face.first});
     }
 
-    if(face_left_iterator != face_map->end()) {
-        return_face.second = (*face_left_iterator).second;
-    }
-    else{
-        if (face_left == glm::vec3(0.))
-        {
-            return_face.second = nullptr;
+    // verificação para resolver o problema das faces right e left terem a mesma aresta base
+    if (!wasEmpty){
+        if(face_left_iterator != face_map->end()) {
+            return_face.second = (*face_left_iterator).second;
         }
-        else {
-            return_face.second = new Face(this);
-            face_map->insert({face_left, return_face.second});
+        else{
+            if (face_left == glm::vec3(0.))
+            {
+                return_face.second = nullptr;
+            }
+            else {
+                return_face.second = new Face(this);
+                face_map->insert({face_left, return_face.second});
+            }
         }
     }
     return return_face;

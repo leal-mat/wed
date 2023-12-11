@@ -28,7 +28,7 @@ void MyGLWidget::initializeGL() {
 	f->glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     f->glEnable(GL_PROGRAM_POINT_SIZE);
     //f->glDisable(GL_CULL_FACE);
-    f->glPointSize(3);
+    f->glPointSize(4);
     f->glLineWidth(2);
 
 

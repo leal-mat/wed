@@ -146,18 +146,18 @@ void Mesh::setGLWidget(MyGLWidget * mgl){
 void Mesh::init() {
  
   //pontos e linhas, por enquanto...
-  VAO.reserve(3);
-  VAO.resize(3);
+  VAO.reserve(4);
+  VAO.resize(4);
 
 
-  VBO.reserve(3);
-  VBO.resize(3);
+  VBO.reserve(4);
+  VBO.resize(4);
 
-  EBO.reserve(3);
-  EBO.resize(3);
+  EBO.reserve(4);
+  EBO.resize(4);
 
-  program.reserve(3);
-  program.resize(3);
+  program.reserve(4);
+  program.resize(4);
 
   idxVector.reserve(vertex_vector.size());
   idxVector.resize(vertex_vector.size());
@@ -166,7 +166,7 @@ void Mesh::init() {
   if(currentContext == nullptr){
     std::cout<<"null context 2\n";
   }
-  for(int i = 0; i < 3; i++){
+  for(int i = 0; i < 4; i++){
     f->glGenVertexArrays(1,&VAO[i]);
     f->glGenBuffers(1,&VBO[i]);
     f->glGenBuffers(1,&EBO[i]);
@@ -178,6 +178,9 @@ void Mesh::init() {
   
   //markedProgram
   program[1].createShaderFromFile("markedShader.vert","markedShader.frag");
+
+  //unMarkedProgram
+  program[2].createShaderFromFile("unMarkedShader.vert","unMarkedShader.frag");
   //std::cout<<"Criou Shader\n";
 
   std::cout<<"gerou buffers\n";
@@ -211,10 +214,12 @@ void Mesh::init() {
   f->glBindVertexArray(0); //unbind current VAO
 
 
+
+
   //lines
   f->glBindVertexArray(VAO[1]);
   
-  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[1]);
   f->glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertex_vector.size()*10, raw_vertexes_vector.data(), GL_DYNAMIC_DRAW);
 //
 //
@@ -234,7 +239,6 @@ void Mesh::init() {
   f->glEnableVertexAttribArray(position_attribute1);
   f->glEnableVertexAttribArray(color_attribute1);
 //
-//
 
   f->glBindBuffer(GL_ARRAY_BUFFER, 0); //unbid current VBO
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); //unbid current EBO
@@ -244,12 +248,12 @@ void Mesh::init() {
   //f->glUseProgram(program[1].getProgramId());
   f->glBindVertexArray(VAO[2]);
   
-  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[2]);
   f->glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertex_vector.size()*10, raw_vertexes_vector.data(), GL_DYNAMIC_DRAW);
 //
 //
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[2]);
-  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 10000 ,marked_idx_vector.data(),GL_DYNAMIC_DRAW);
+  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * 10000 ,marked_idx_vector_edge.data(),GL_DYNAMIC_DRAW);
   
 //
 //
@@ -263,112 +267,92 @@ void Mesh::init() {
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
   f->glBindVertexArray(0); //unbind current VAO
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  f->glBindVertexArray(VAO[3]);
+  
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[3]);
+  f->glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertex_vector.size()*10, raw_vertexes_vector.data(), GL_DYNAMIC_DRAW);
+
+
+
+
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO[3]);
+  f->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * idxVector.size()*10, marked_idx_vector_point.data(), GL_DYNAMIC_DRAW);
+
+
+  GLint position_attribute3 = f->glGetAttribLocation(program[0].getProgramId(), "position");
+
+  f->glVertexAttribPointer(position_attribute3, 3, GL_FLOAT,GL_FALSE, sizeof(Vertex), 0);
+
+  f->glEnableVertexAttribArray(position_attribute3);
+
+  f->glBindBuffer(GL_ARRAY_BUFFER, 0); //unbid current VBO
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); //unbid current EBO
+  f->glBindVertexArray(0); //unbind current VAO
+
 }
 
-/*
+
+
 void Mesh::draw() {
   
-  f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+  f->glPolygonMode( GL_FRONT_AND_BACK, GL_POINT );
   f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  //Drawing Points
-
-  uint p0ID = program[0].getProgramId();
-
-  f->glUseProgram(p0ID);
-  GLuint vmatrix = f->glGetUniformLocation(p0ID, "m_view");
-  GLuint pmatrix = f->glGetUniformLocation(p0ID, "m_proj");
-  f->glUniformMatrix4fv(vmatrix, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getViewMatrix()));
-  f->glUniformMatrix4fv(pmatrix, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getProjMatrix()));
-
-  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
-
-
-  void * ptrPoint = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
-  memcpy(ptrPoint, raw_vertexes_vector.data(), raw_vertexes_vector.size() * (sizeof(Vertex)));
-  f->glUnmapBuffer(GL_ARRAY_BUFFER);
-
-
-  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[0]);
-
-  void * ptrPointEle = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
-  memcpy(ptrPointEle,idxVector.data(), idxVector.size()* sizeof(uint));
-  f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-
-
-  f->glBindVertexArray(VAO[1]);
-
-  f->glUseProgram(program[0].getProgramId());
-  f->glDrawElements(GL_POINTS,idxVector.size(), GL_UNSIGNED_INT, idxVector.data());
-
-  //Drawing Edges
-  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[1]);
-
-  void * ptrPointEle1 = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
-  memcpy(ptrPointEle1,edges_idx_vector.data(), edges_idx_vector.size()* sizeof(uint));
-  f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-
-
-
-  f->glBindVertexArray(VAO[0]);
-
-  f->glUseProgram(program[0].getProgramId());
-  f->glDrawElements(GL_LINES,edges_idx_vector.size(), GL_UNSIGNED_INT, edges_idx_vector.data());
-  
-
-  //Drawing Marked Edges
-  std::cout<< "Drawing marked edges: " << "\n";
-
-  uint p1ID = program[1].getProgramId();
-
-  //f->glBindVertexArray(VAO[2]);
-  f->glUseProgram(p1ID);
-  GLuint vmatrix1 = f->glGetUniformLocation(p1ID, "m_view");
-  GLuint pmatrix1 = f->glGetUniformLocation(p1ID, "m_proj");
-  f->glUniformMatrix4fv(vmatrix1, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getViewMatrix()));
-  f->glUniformMatrix4fv(pmatrix1, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getProjMatrix()));
-
-
-  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[2]);
-
-  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
-
-  void * ptrPointEle2 = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
-  std::cout<< "4: " << "\n";
-  std::cout<< "Size de markedvector: " << marked_idx_vector.size() << "\n";
-  memcpy(ptrPointEle2, marked_idx_vector.data(), marked_idx_vector.size()* sizeof(uint));
-  f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-
-
-
-  //f->glBindVertexArray(VAO[2]);
-  f->glBindVertexArray(VAO[2]);
-  f->glUseProgram(program[1].getProgramId());
-  //f->glDrawElements(GL_LINES, marked_idx_vector.size(), GL_UNSIGNED_INT, marked_idx_vector.data());
-
 
   f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
   f->glBindVertexArray(0); //unbind current VAO
-  
-}
-
-*/
-
-
-void Mesh::draw() {
-  
-  f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-  f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  f->glLineWidth(1);
 
   uint p0ID = program[0].getProgramId();
 
   f->glUseProgram(p0ID);
   GLuint vmatrix = f->glGetUniformLocation(p0ID, "m_view");
   GLuint pmatrix = f->glGetUniformLocation(p0ID, "m_proj");
+  //GLuint pointsize = f->glGetUniformLocation(p0ID, "gl_PointSize");
   f->glUniformMatrix4fv(vmatrix, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getViewMatrix()));
   f->glUniformMatrix4fv(pmatrix, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getProjMatrix()));
+  //f->glUniform1f(pointsize, 10.f);
+
+
+
+  uint p2ID = program[2].getProgramId();
+
+  f->glUseProgram(p2ID);
+  GLuint vmatrix2 = f->glGetUniformLocation(p2ID, "m_view");
+  GLuint pmatrix2 = f->glGetUniformLocation(p2ID, "m_proj");
+  //GLuint pointsize = f->glGetUniformLocation(p0ID, "gl_PointSize");
+  f->glUniformMatrix4fv(vmatrix2, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getViewMatrix()));
+  f->glUniformMatrix4fv(pmatrix2, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getProjMatrix()));
+  //f->glUniform1f(pointsize, 10.f);
+
+
 
   f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
 
@@ -385,11 +369,24 @@ void Mesh::draw() {
   f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
 
-  f->glBindVertexArray(VAO[1]);
+  f->glBindVertexArray(VAO[0]);
 
-  f->glUseProgram(program[0].getProgramId());
+  f->glUseProgram(program[2].getProgramId());
   f->glDrawElements(GL_POINTS,idxVector.size(), GL_UNSIGNED_INT, idxVector.data());
 
+  f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
+  f->glBindVertexArray(0); //unbind current VAO
+
+
+  f->glPolygonMode( GL_FRONT_AND_BACK, GL_LINE);
+
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[1]);
+
+
+  void * ptrPoint1 = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
+  memcpy(ptrPoint1, raw_vertexes_vector.data(), raw_vertexes_vector.size() * (sizeof(Vertex)));
+  f->glUnmapBuffer(GL_ARRAY_BUFFER);
 
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[1]);
 
@@ -399,17 +396,12 @@ void Mesh::draw() {
 
 
 
-  f->glBindVertexArray(VAO[0]);
+  f->glBindVertexArray(VAO[1]);
 
   f->glUseProgram(program[0].getProgramId());
   f->glDrawElements(GL_LINES,edges_idx_vector.size(), GL_UNSIGNED_INT, edges_idx_vector.data());
 
-
-
-
-
-
-
+  f->glClear(GL_DEPTH_BUFFER_BIT);
 
 
   f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
@@ -424,7 +416,6 @@ void Mesh::draw() {
 
   //Drawing Marked Edges
   std::cout<< "Drawing marked edges: " << "\n";
-  f->glLineWidth(1);
 
   uint p1ID = program[1].getProgramId();
 
@@ -432,16 +423,24 @@ void Mesh::draw() {
   f->glUseProgram(p1ID);
   GLuint vmatrix1 = f->glGetUniformLocation(p1ID, "m_view");
   GLuint pmatrix1 = f->glGetUniformLocation(p1ID, "m_proj");
+  //GLuint pointsize1 = f->glGetUniformLocation(p1ID, "gl_PointSize");
   f->glUniformMatrix4fv(vmatrix1, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getViewMatrix()));
   f->glUniformMatrix4fv(pmatrix1, 1, GL_FALSE, glm::value_ptr(glWidget->getCamera()->getProjMatrix()));
+  //f->glUniform1f(pointsize, 10.f);
+
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[2]);
+
+
+  void * ptrPoint2 = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
+  memcpy(ptrPoint2, raw_vertexes_vector.data(), raw_vertexes_vector.size() * (sizeof(Vertex)));
+  f->glUnmapBuffer(GL_ARRAY_BUFFER);
 
 
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[2]);
 
-  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[0]);
 
   void * ptrPointEle2 = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
-  memcpy(ptrPointEle2, marked_idx_vector.data(), marked_idx_vector.size()* sizeof(uint));
+  memcpy(ptrPointEle2, marked_idx_vector_edge.data(), marked_idx_vector_edge.size()* sizeof(uint));
   f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
 
@@ -449,8 +448,51 @@ void Mesh::draw() {
   //f->glBindVertexArray(VAO[2]);
   f->glBindVertexArray(VAO[2]);
   f->glUseProgram(program[1].getProgramId());
-  f->glDrawElements(GL_LINES, marked_idx_vector.size(), GL_UNSIGNED_INT, marked_idx_vector.data());
+  f->glDrawElements(GL_LINES, marked_idx_vector_edge.size(), GL_UNSIGNED_INT, marked_idx_vector_edge.data());
 
+
+  f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
+  f->glBindVertexArray(0); //unbind current VAO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  f->glBindBuffer(GL_ARRAY_BUFFER,VBO[3]);
+
+
+  void * ptrPoint3 = f->glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
+  memcpy(ptrPoint3, raw_vertexes_vector.data(), raw_vertexes_vector.size() * (sizeof(Vertex)));
+  f->glUnmapBuffer(GL_ARRAY_BUFFER);
+
+
+  f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO[3]);
+
+  void * ptrPointEle3 = f->glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
+  memcpy(ptrPointEle3,marked_idx_vector_point.data(), marked_idx_vector_point.size()* sizeof(uint));
+  f->glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+
+
+  f->glBindVertexArray(VAO[3]);
+
+  f->glUseProgram(program[1].getProgramId());
+  f->glDrawElements(GL_POINTS,marked_idx_vector_point.size(), GL_UNSIGNED_INT, marked_idx_vector_point.data());
 
   f->glBindBuffer(GL_ARRAY_BUFFER,0); //unbid current VBO
   f->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0); //unbid current EBO
@@ -607,27 +649,27 @@ void Mesh::EF(Face* face){
 void Mesh::markFace(Face* face){
   face->visit = true;
   std::cout<<"Visitei face da aresta: " << "<" << face->edge->edge.first << ", "<< face->edge->edge.second<<">\n";
-  // marked_idx_vector.push_back((uint)face->edge->edge.first);
-  // marked_idx_vector.push_back((uint)face->edge->edge.second);
+  // marked_idx_vector_edge.push_back((uint)face->edge->edge.first);
+  // marked_idx_vector_edge.push_back((uint)face->edge->edge.second);
   EF(face);
 }
 
 void Mesh::markEdge(Wed* edge){
   edge->visit = true;
   std::cout << "Visitei a aresta: " << "<" << edge->edge.first << ", "<< edge->edge.second << ">\n";
-  marked_idx_vector.push_back((uint)edge->edge.first);
-  marked_idx_vector.push_back((uint)edge->edge.second);
+  marked_idx_vector_edge.push_back((uint)edge->edge.first);
+  marked_idx_vector_edge.push_back((uint)edge->edge.second);
 }
 
 void Mesh::markVertex(Vertex* vertex){
   vertex->visit = true;
-  std::cout << "Visitei o vértice: " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
-  marked_idx_vector.push_back((uint)vertex->edge->edge.first);
-  marked_idx_vector.push_back((uint)vertex->edge->edge.second);
+  std::cout << "Visitei o vértice "<<vertex->index<<": " << "<" << vertex->edge->edge.first << ", "<< vertex->edge->edge.second << ">\n";
+  marked_idx_vector_point.push_back((uint)vertex->index);
 }
 
 void Mesh::clearMarkedEdges(){
-  std::cout<<"Cleaning marked_idx_vector\n" ;
-  marked_idx_vector.clear();
+  std::cout<<"Cleaning marked_idx_vector_edge and marked_idx_vector_point\n" ;
+  marked_idx_vector_edge.clear();
+  marked_idx_vector_point.clear();
 }
 
